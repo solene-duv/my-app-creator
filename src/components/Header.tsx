@@ -20,7 +20,7 @@ const Header = () => {
               </a>
             </nav>
           </div>
-          <Button variant="outline" className="rounded-full">
+          <Button variant="outline" className="rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground">
             Se connecter
           </Button>
         </div>

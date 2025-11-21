@@ -20,7 +20,7 @@ const LearningSection = () => {
               <Button
                 key={category}
                 variant="outline"
-                className="flex-1 h-auto py-6 rounded-full text-base font-medium hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
+                className="flex-1 h-auto py-6 rounded-full text-base font-medium border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
               >
                 {category}
               </Button>
