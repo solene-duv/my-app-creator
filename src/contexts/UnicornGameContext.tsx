@@ -161,8 +161,8 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       
       const price = currentMargin + 0.01;
       
-      // A. Production - AutoClippers produce clips
-      // Production Rate = clipmakerRate (clips/second)
+      // A. Production Rate = clipmakerRate (clips/second)
+      // Per tick production
       let clipsProduced = 0;
       let wireUsed = 0;
       
@@ -175,12 +175,14 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       const totalClips = currentClips + clipsProduced;
       
       // C. Sales Rate = min(clips, demand) per second
-      // For this tick (1/20 second): divide by TICKS_PER_SECOND
-      const clipsSoldThisTick = Math.min(totalClips, currentDemand) / TICKS_PER_SECOND;
+      // CORRECTED: For this tick, demand per tick is demand/TICKS_PER_SECOND
+      // Sales this tick = min(all available clips, demand per tick)
+      const demandPerTick = currentDemand / TICKS_PER_SECOND;
+      const clipsSoldThisTick = Math.min(totalClips, demandPerTick);
       const revenue = clipsSoldThisTick * price;
       
       // D. Unsold Inventory Update
-      // New clips = clips + clipmakerRate - min(clips, demand)
+      // Formula: New clips = clips + clipmakerRate - min(clips, demand)
       const newClips = totalClips - clipsSoldThisTick;
       
       // Apply all updates separately (no nesting)
