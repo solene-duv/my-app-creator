@@ -162,6 +162,7 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       const price = currentMargin + 0.01;
       
       // A. Production - AutoClippers produce clips
+      // Production Rate = clipmakerRate (clips/second)
       let clipsProduced = 0;
       let wireUsed = 0;
       
@@ -173,31 +174,32 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       // B. Calculate total clips after production
       const totalClips = currentClips + clipsProduced;
       
-      // C. Sales - clips sold per tick based on demand
-      // In Universal Paperclips, demand is "per second", so divide by ticks per second
-      const clipsSoldPerTick = Math.min(totalClips, currentDemand / TICKS_PER_SECOND);
-      const revenue = clipsSoldPerTick * price;
+      // C. Sales Rate = min(clips, demand) per second
+      // For this tick (1/20 second): divide by TICKS_PER_SECOND
+      const clipsSoldThisTick = Math.min(totalClips, currentDemand) / TICKS_PER_SECOND;
+      const revenue = clipsSoldThisTick * price;
+      
+      // D. Unsold Inventory Update
+      // New clips = clips + clipmakerRate - min(clips, demand)
+      const newClips = totalClips - clipsSoldThisTick;
       
       // Apply all updates separately (no nesting)
       if (wireUsed > 0) {
         setWire(currentWire - wireUsed);
       }
       
-      setClips(totalClips - clipsSoldPerTick);
+      setClips(newClips);
       
       if (revenue > 0) {
         setFunds(prevFunds => prevFunds + revenue);
       }
       
-      // D. Dynamic Wire Price - decay (Universal Paperclips: happens every 250 ticks)
-      // We're running at 50ms ticks, so 250 ticks = 12.5 seconds
-      // Simplified: decay continuously at the same rate
+      // E. Dynamic Wire Price - decay
       if (currentWireBasePrice > 15) {
         setWireBasePrice(currentWireBasePrice - (currentWireBasePrice / 1000) / TICKS_PER_SECOND);
       }
       
-      // E. Dynamic Wire Price - fluctuation (random check)
-      // Universal Paperclips: if (Math.random() < .015)
+      // F. Dynamic Wire Price - fluctuation (random check)
       if (Math.random() < 0.015) {
         setWirePriceCounter(prev => {
           const newCounter = prev + 1;
