@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Rocket, Diamond, Leaf } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '@/contexts/GameContext';
-import confetti from 'canvas-confetti';
 
 type ArchetypeCard = {
   id: 'FOUNDER' | 'EARNER' | 'HEIR';
@@ -47,13 +46,6 @@ const Onboarding = () => {
   const handleSelectArchetype = (archetype: 'FOUNDER' | 'EARNER' | 'HEIR') => {
     setUserArchetype(archetype);
     
-    // Confetti explosion
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-
     setTimeout(() => navigate('/dashboard'), 600);
   };
 
