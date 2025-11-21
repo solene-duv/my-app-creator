@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useUnicornGame } from "@/contexts/UnicornGameContext";
 import { InvestmentCard } from "@/components/wealth/InvestmentCard";
 import { AllocationModal } from "@/components/wealth/AllocationModal";
 import { PortfolioVisual } from "@/components/wealth/PortfolioVisual";
@@ -20,10 +19,8 @@ export interface Portfolio {
 const formatWealth = (value: number) => `€${value.toFixed(1)}K`;
 
 const WealthSimulator = () => {
-  const { exitPayout } = useUnicornGame();
-  
-  // Use exitPayout if available, otherwise default demo amount
-  const initialWealth = exitPayout > 0 ? exitPayout : 5000;
+  // Standalone demo with default wealth amount
+  const initialWealth = 5000;
   
   const [availableWealth, setAvailableWealth] = useState(initialWealth);
   const [portfolio, setPortfolio] = useState<Portfolio>({
