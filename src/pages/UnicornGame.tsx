@@ -11,15 +11,15 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const UnicornGameContent = () => {
-  const { hasExited } = useUnicornGame();
+  const { hasExited, exitPayout } = useUnicornGame();
   const navigate = useNavigate();
 
-  // Redirect to Wealth Simulator after exit
+  // Redirect to Wealth Simulator after exit with payout data
   useEffect(() => {
     if (hasExited) {
-      navigate("/wealth-simulator");
+      navigate("/wealth-simulator", { state: { exitPayout } });
     }
-  }, [hasExited, navigate]);
+  }, [hasExited, exitPayout, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-foreground p-4">
