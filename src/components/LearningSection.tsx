@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const LearningSection = () => {
   const categories = [
@@ -16,15 +17,32 @@ const LearningSection = () => {
           </h2>
           
           <div className="flex flex-col md:flex-row gap-4 w-full max-w-4xl">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant="outline"
-                className="flex-1 h-auto py-6 rounded-full text-base font-medium border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
-              >
-                {category}
-              </Button>
-            ))}
+            {categories.map((category) => {
+              const route = category === "Produits d'épargne" ? "/savings-products" : "#";
+              
+              if (category === "Produits d'épargne") {
+                return (
+                  <Link key={category} to={route} className="flex-1">
+                    <Button
+                      variant="outline"
+                      className="w-full h-auto py-6 rounded-full text-base font-medium border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+                    >
+                      {category}
+                    </Button>
+                  </Link>
+                );
+              }
+              
+              return (
+                <Button
+                  key={category}
+                  variant="outline"
+                  className="flex-1 h-auto py-6 rounded-full text-base font-medium border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+                >
+                  {category}
+                </Button>
+              );
+            })}
           </div>
 
           <div className="mt-8 max-w-3xl">
