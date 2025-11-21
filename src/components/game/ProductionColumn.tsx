@@ -2,6 +2,13 @@ import { useUnicornGame } from "@/contexts/UnicornGameContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+const formatCurrency = (value: number) => {
+  if (value >= 1000) {
+    return `€${(value / 1000).toFixed(1)}K`;
+  }
+  return `€${value.toFixed(2)}`;
+};
+
 export const ProductionColumn = () => {
   const {
     funds,
@@ -29,7 +36,7 @@ export const ProductionColumn = () => {
       <div className="mb-4">
         <div className="text-sm text-muted-foreground">Available Funds:</div>
         <div className="text-3xl font-mono font-bold text-primary">
-          $ {funds.toFixed(2)}
+          {formatCurrency(funds)}
         </div>
       </div>
 
@@ -63,7 +70,7 @@ export const ProductionColumn = () => {
           <div className="flex-1">
             <div className="text-xs text-muted-foreground">Price per Clip:</div>
             <div className="text-xl font-mono font-bold text-accent">
-              $ {price.toFixed(2)}
+              {formatCurrency(price)}
             </div>
           </div>
         </div>
@@ -88,7 +95,7 @@ export const ProductionColumn = () => {
           <div className="text-right">
             <div className="text-xs text-muted-foreground">Cost:</div>
             <div className="text-lg font-mono text-accent">
-              $ {marketingCost.toFixed(2)}
+              {formatCurrency(marketingCost)}
             </div>
           </div>
         </div>

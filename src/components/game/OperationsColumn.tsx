@@ -2,6 +2,13 @@ import { useUnicornGame } from "@/contexts/UnicornGameContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+const formatCurrency = (value: number) => {
+  if (value >= 1000) {
+    return `€${(value / 1000).toFixed(1)}K`;
+  }
+  return `€${value.toFixed(2)}`;
+};
+
 export const OperationsColumn = () => {
   const { 
     clipmakerRate,
@@ -53,7 +60,7 @@ export const OperationsColumn = () => {
           <div className="text-right">
             <div className="text-xs text-muted-foreground">Cost:</div>
             <div className="text-lg font-mono text-primary">
-              $ {wireCost.toFixed(0)}
+              {formatCurrency(wireCost)}
             </div>
           </div>
         </div>
@@ -78,7 +85,7 @@ export const OperationsColumn = () => {
           <div className="text-right">
             <div className="text-xs text-muted-foreground">Cost:</div>
             <div className="text-lg font-mono text-accent">
-              $ {clipperCost.toFixed(2)}
+              {formatCurrency(clipperCost)}
             </div>
           </div>
         </div>
