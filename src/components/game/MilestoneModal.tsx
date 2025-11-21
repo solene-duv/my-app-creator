@@ -17,6 +17,18 @@ interface Milestone {
 
 export const MILESTONES: Milestone[] = [
   {
+    revenue: 5,
+    title: "First Revenue 🚀",
+    text: "You made your first €5K! This is where it starts to feel real. You've proven people will pay for what you're building. Keep the momentum going.",
+    icon: <TrendingUp className="h-8 w-8 text-green-500" />,
+  },
+  {
+    revenue: 10,
+    title: "Early Validation ✅",
+    text: "€10K in revenue shows consistent demand. You're not just lucky—there's a real market here. Time to think about scaling operations.",
+    icon: <Lightbulb className="h-8 w-8 text-yellow-500" />,
+  },
+  {
     revenue: 20,
     title: "First Real Traction 🎯",
     text: "You're getting your first paying users! This is when you start learning what customers truly value. Listen closely to their feedback and iterate fast.",
