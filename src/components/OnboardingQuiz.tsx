@@ -78,20 +78,8 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
         setCurrentQuestion(currentQuestion + 1);
         setIsTransitioning(false);
       } else {
-        // Quiz complete - determine winner
-        let winner: Profile = "founder";
-        let maxScore = newScores.founder;
-
-        if (newScores.impactHero > maxScore) {
-          winner = "impactHero";
-          maxScore = newScores.impactHero;
-        }
-
-        if (newScores.owner > maxScore) {
-          winner = "owner";
-        }
-
-        onComplete(winner);
+        // Quiz complete - always route to Founder Journey for now
+        onComplete("founder");
       }
     }, 300);
   };
