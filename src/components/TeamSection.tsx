@@ -11,7 +11,7 @@ const TeamSection = () => {
   return (
     <section id="team" className="w-full bg-white py-16">
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto bg-[#fef9c3] rounded-3xl border-4 border-dashed border-foreground/30 p-12">
+        <div className="max-w-5xl mx-auto bg-white rounded-3xl border-4 border-solid border-[#008755] p-12">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-foreground" style={{ fontFamily: "'Comic Sans MS', cursive" }}>
             Notre équipe
           </h2>
