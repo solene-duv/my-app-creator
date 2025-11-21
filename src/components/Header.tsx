@@ -22,11 +22,13 @@ const Header = () => {
               </a>
             </nav>
           </div>
-          <img 
-            src={bnpLogo} 
-            alt="BNP Paribas" 
-            className="h-10 md:h-12 object-contain absolute left-1/2 -translate-x-1/2"
-          />
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2">
+            <img 
+              src={bnpLogo} 
+              alt="BNP Paribas" 
+              className="h-10 md:h-12 object-contain cursor-pointer hover:opacity-80 transition-opacity"
+            />
+          </Link>
           <Button variant="outline" className="rounded-full bg-white border-white hover:bg-white/90 text-foreground">
             Se connecter
           </Button>
