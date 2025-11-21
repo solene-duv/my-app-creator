@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
+import bnpLogo from "@/assets/bnp-paribas-logo.png";
 
 const Header = () => {
   return (
@@ -20,6 +21,11 @@ const Header = () => {
               </a>
             </nav>
           </div>
+          <img 
+            src={bnpLogo} 
+            alt="BNP Paribas" 
+            className="h-10 md:h-12 object-contain absolute left-1/2 -translate-x-1/2"
+          />
           <Button variant="outline" className="rounded-full bg-white border-white hover:bg-white/90 text-foreground">
             Se connecter
           </Button>
