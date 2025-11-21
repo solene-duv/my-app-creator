@@ -2,17 +2,19 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 interface GameState {
   // Business Section
+  clips: number;
   funds: number;
-  unsoldInventory: number;
-  price: number;
-  publicDemand: number;
+  margin: number;
+  demand: number;
   marketingLevel: number;
   
   // Manufacturing
-  clipsPerSecond: number;
+  clipmakerRate: number;
   wire: number;
   wireCost: number;
-  autoClippers: number;
+  wireBasePrice: number;
+  clipperLevel: number;
+  clipperCost: number;
   
   // Game State
   logs: string[];
@@ -26,23 +28,28 @@ interface GameContextType extends GameState {
   buyMarketing: () => void;
   buyAutoClipper: () => void;
   restartGame: () => void;
+  getPrice: () => number;
+  getMarketingCost: () => number;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   // Business
+  const [clips, setClips] = useState(0);
   const [funds, setFunds] = useState(0);
-  const [unsoldInventory, setUnsoldInventory] = useState(0);
-  const [price, setPrice] = useState(0.25);
-  const [publicDemand, setPublicDemand] = useState(32);
+  const [margin, setMargin] = useState(0.25);
+  const [demand, setDemand] = useState(100);
   const [marketingLevel, setMarketingLevel] = useState(1);
   
   // Manufacturing
-  const [clipsPerSecond, setClipsPerSecond] = useState(0);
+  const [clipmakerRate, setClipmakerRate] = useState(0);
   const [wire, setWire] = useState(1000);
-  const [wireCost, setWireCost] = useState(20);
-  const [autoClippers, setAutoClippers] = useState(0);
+  const [wireCost, setWireCost] = useState(17.50);
+  const [wireBasePrice, setWireBasePrice] = useState(17.50);
+  const [wirePriceCounter, setWirePriceCounter] = useState(0);
+  const [clipperLevel, setClipperLevel] = useState(0);
+  const [clipperCost, setClipperCost] = useState(5);
   
   const [logs, setLogs] = useState<string[]>(['> System initialized.']);
 
@@ -50,118 +57,137 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     setLogs(prev => [...prev.slice(-9), `> ${message}`]);
   };
 
-  // Make a single clip
+  const getPrice = () => margin + 0.01;
+  const getMarketingCost = () => 100 * Math.pow(2, marketingLevel - 1);
+
+  // Make a single clip - clipClick(1)
   const makeClip = () => {
     if (wire < 1) {
       addLog('Out of wire!');
       return;
     }
     setWire(prev => prev - 1);
-    setUnsoldInventory(prev => prev + 1);
+    setClips(prev => prev + 1);
   };
 
-  // Buy wire (1000 inches)
+  // Buy wire (1000 units) - buyWire()
   const buyWire = () => {
     if (funds < wireCost) return;
     setFunds(prev => prev - wireCost);
     setWire(prev => prev + 1000);
+    setWireBasePrice(prev => prev + 0.05);
   };
 
-  // Price controls
+  // Lower price - lowerPrice()
   const lowerPrice = () => {
-    setPrice(prev => Math.max(0.01, prev - 0.01));
+    setMargin(prev => Math.max(0.01, prev - 0.01));
+    setDemand(prev => prev + 1);
   };
 
+  // Raise price - raisePrice()
   const raisePrice = () => {
-    setPrice(prev => prev + 0.01);
+    setMargin(prev => prev + 0.01);
+    setDemand(prev => Math.max(1, prev - 1));
   };
 
-  // Buy marketing
+  // Buy marketing - buyAds()
   const buyMarketing = () => {
-    const cost = 100 * Math.pow(2, marketingLevel - 1);
+    const cost = getMarketingCost();
     if (funds < cost) return;
     setFunds(prev => prev - cost);
+    setDemand(prev => prev + (prev * 0.25));
     setMarketingLevel(prev => prev + 1);
     addLog(`Marketing Level ${marketingLevel + 1}`);
   };
 
-  // Buy AutoClipper
+  // Buy AutoClipper - makeClipper()
   const buyAutoClipper = () => {
-    const cost = 5 + Math.pow(1.1, autoClippers);
-    if (funds < cost) return;
-    setFunds(prev => prev - cost);
-    setAutoClippers(prev => prev + 1);
-    addLog(`AutoClipper #${autoClippers + 1} online`);
+    if (funds < clipperCost) return;
+    setFunds(prev => prev - clipperCost);
+    setClipperLevel(prev => prev + 1);
+    setClipmakerRate(prev => prev + 1);
+    setClipperCost(prev => Math.floor(prev * 1.15));
+    addLog(`AutoClipper #${clipperLevel + 1} online`);
   };
 
   const restartGame = () => {
+    setClips(0);
     setFunds(0);
-    setUnsoldInventory(0);
-    setPrice(0.25);
-    setPublicDemand(32);
+    setMargin(0.25);
+    setDemand(100);
     setMarketingLevel(1);
-    setClipsPerSecond(0);
+    setClipmakerRate(0);
     setWire(1000);
-    setWireCost(20);
-    setAutoClippers(0);
+    setWireCost(17.50);
+    setWireBasePrice(17.50);
+    setWirePriceCounter(0);
+    setClipperLevel(0);
+    setClipperCost(5);
     setLogs(['> System initialized.']);
   };
 
-  // Main game loop - 100ms tick
+  // Main game loop - 50ms tick (20 ticks per second)
   useEffect(() => {
+    const TICKS_PER_SECOND = 20;
     const interval = setInterval(() => {
-      // Calculate Public Demand using Universal Paperclips formula
-      // PD = (1.1^(marketingLevel - 1)) * (0.8 / price)
-      const PD = Math.pow(1.1, marketingLevel - 1) * (0.8 / price);
-      setPublicDemand(Math.floor(PD * 10) / 10);
+      const price = margin + 0.01;
       
-      // Calculate clips sold per second using the exact formula:
-      // clipsPerSecond = min(1, PD/100) * 7 * PD^1.15
-      const clipsPerSecond = Math.min(1, PD / 100) * 7 * Math.pow(PD, 1.15);
-      
-      // Convert to per 100ms (divide by 10)
-      const clipsPerTick = clipsPerSecond / 10;
-      
-      // Attempt to sell inventory
-      if (unsoldInventory > 0) {
-        const clipsSold = Math.min(unsoldInventory, clipsPerTick);
-        setUnsoldInventory(prev => prev - clipsSold);
-        setFunds(prev => prev + (clipsSold * price));
-      }
-      
-      // AutoClippers production
-      if (autoClippers > 0 && wire >= autoClippers / 10) {
-        const production = autoClippers / 10; // Per 100ms
+      // A. Production - AutoClippers produce clips
+      if (clipmakerRate > 0 && wire >= clipmakerRate / TICKS_PER_SECOND) {
+        const production = clipmakerRate / TICKS_PER_SECOND;
         setWire(prev => prev - production);
-        setUnsoldInventory(prev => prev + production);
+        setClips(prev => prev + production);
       }
       
-      // Update clips per second
-      setClipsPerSecond(autoClippers);
+      // B. Sales and Revenue
+      setClips(prev => {
+        if (prev > 0) {
+          // Calculate how many clips can be sold this tick
+          const saleRate = Math.min(prev, demand / TICKS_PER_SECOND);
+          const revenue = saleRate * price;
+          
+          setFunds(f => f + revenue);
+          
+          return prev - saleRate;
+        }
+        return prev;
+      });
       
-      // Wire cost fluctuation (every ~2 seconds)
-      if (Math.random() < 0.005) {
-        setWireCost(prev => {
-          const change = (Math.random() - 0.5) * 8;
-          return Math.max(15, Math.min(30, prev + change));
+      // C. Dynamic Wire Price - decay
+      setWireBasePrice(prev => {
+        if (prev > 15) {
+          return prev - (prev / 1000) / TICKS_PER_SECOND;
+        }
+        return prev;
+      });
+      
+      // C. Dynamic Wire Price - fluctuation (random check)
+      if (Math.random() < 0.015) {
+        setWirePriceCounter(prev => {
+          const newCounter = prev + 1;
+          const newCost = Math.ceil(wireBasePrice + 6 * Math.sin(newCounter));
+          setWireCost(newCost);
+          return newCounter;
         });
       }
-    }, 100);
+    }, 50);
 
     return () => clearInterval(interval);
-  }, [unsoldInventory, price, marketingLevel, autoClippers, wire]);
+  }, [clips, margin, demand, clipmakerRate, wire, wireBasePrice]);
 
   return (
     <GameContext.Provider value={{
+      clips,
       funds,
-      unsoldInventory,
-      price,
-      publicDemand,
+      margin,
+      demand,
       marketingLevel,
-      clipsPerSecond,
+      clipmakerRate,
       wire,
       wireCost,
-      autoClippers,
+      wireBasePrice,
+      clipperLevel,
+      clipperCost,
       logs,
       makeClip,
       buyWire,
@@ -170,6 +196,8 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       buyMarketing,
       buyAutoClipper,
       restartGame,
+      getPrice,
+      getMarketingCost,
     }}>
       {children}
     </GameContext.Provider>
