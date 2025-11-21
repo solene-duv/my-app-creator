@@ -280,7 +280,7 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isGamePaused || hasExited) return;
     
-    const milestones = [20, 40, 60, 80, 100];
+    const milestones = [5, 10, 20, 40, 60, 80, 100];
     
     // Find the next unshown milestone that we've crossed
     for (const milestone of milestones) {
