@@ -8,6 +8,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import SkillTree from "./pages/SkillTree";
 import Marketplace from "./pages/Marketplace";
+import UnicornGame from "./pages/UnicornGame";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/skill-tree" element={<SkillTree />} />
             <Route path="/bnp-investissement" element={<Marketplace />} />
+            <Route path="/unicorn-game" element={<UnicornGame />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

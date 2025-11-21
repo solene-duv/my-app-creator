@@ -17,6 +17,7 @@ export default {
         'handwritten': ['Caveat', 'cursive'],
         'sans': ['Inter', 'system-ui', 'sans-serif'],
         'display': ['Syne', 'Inter', 'sans-serif'],
+        'mono': ['JetBrains Mono', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
