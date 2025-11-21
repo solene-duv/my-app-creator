@@ -8,18 +8,18 @@ export const OperationsColumn = () => {
     cash,
     price,
     marketingLevel,
-    demand,
-    linesOfCode,
+    publicDemand,
     gameStage,
-    upgrades,
-    autoCodeClicks,
+    autoCoderLevel,
     increasePrice,
     decreasePrice,
-    buyUpgrade,
+    buyAutoCoder,
     buyMarketing,
   } = useUnicornGame();
 
+  const autoCoderCost = 60 * Math.pow(1.1, autoCoderLevel);
   const marketingCost = 100 * Math.pow(2, marketingLevel - 1);
+  
   const showMarket = gameStage !== 'BOOTSTRAP';
   const showAutomation = gameStage === 'SCALE' || gameStage === 'UNICORN';
 
@@ -30,9 +30,9 @@ export const OperationsColumn = () => {
       </h2>
       
       {/* Cash Display */}
-      <div className="mb-4">
-        <div className="text-xs text-muted-foreground">Cash</div>
-        <div className="text-3xl font-mono font-bold text-primary">
+      <div className="mb-4 p-4 bg-slate-950 rounded-lg">
+        <div className="text-xs text-muted-foreground mb-1">Cash</div>
+        <div className="text-4xl font-mono font-bold text-primary">
           ${cash.toFixed(2)}
         </div>
       </div>
@@ -40,19 +40,19 @@ export const OperationsColumn = () => {
       {showMarket && (
         <>
           {/* Price Control */}
-          <div className="mb-4 p-3 bg-slate-800 rounded-lg">
+          <div className="mb-4 p-3 bg-slate-950 rounded-lg border border-accent/30">
             <div className="text-xs text-muted-foreground mb-2">Price per License</div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-3">
               <Button
                 onClick={decreasePrice}
                 size="sm"
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-10 w-10 p-0"
               >
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-5 w-5" />
               </Button>
-              <div className="flex-1 text-center">
-                <span className="text-2xl font-mono font-bold text-accent">
+              <div className="flex-1 text-center bg-slate-900 py-2 rounded">
+                <span className="text-3xl font-mono font-bold text-accent">
                   ${price.toFixed(2)}
                 </span>
               </div>
@@ -60,28 +60,34 @@ export const OperationsColumn = () => {
                 onClick={increasePrice}
                 size="sm"
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-10 w-10 p-0"
               >
-                <ChevronUp className="h-4 w-4" />
+                <ChevronUp className="h-5 w-5" />
               </Button>
             </div>
-            <div className="text-xs text-muted-foreground mt-2 text-center">
-              Demand: {demand.toFixed(1)}/sec
+            <div className="text-xs text-center">
+              <span className="text-muted-foreground">Public Demand: </span>
+              <span className="font-mono font-bold text-accent">
+                {publicDemand.toFixed(1)}
+              </span>
             </div>
           </div>
 
           {/* Marketing */}
-          <div className="mb-4">
-            <div className="text-xs text-muted-foreground mb-1">
-              Marketing Level: {marketingLevel}
+          <div className="mb-4 p-3 bg-slate-950 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-muted-foreground">Marketing Level</span>
+              <span className="font-mono font-bold text-primary text-lg">
+                {marketingLevel}
+              </span>
             </div>
             <Button
               onClick={buyMarketing}
               disabled={cash < marketingCost}
               variant="outline"
-              className="w-full border-accent text-accent hover:bg-accent/20"
+              className="w-full border-accent text-accent hover:bg-accent/20 font-mono"
             >
-              Upgrade Marketing (${marketingCost.toFixed(0)})
+              Upgrade (${marketingCost.toFixed(0)})
             </Button>
           </div>
         </>
@@ -90,31 +96,27 @@ export const OperationsColumn = () => {
       {/* Automation */}
       {showAutomation && (
         <div className="space-y-2">
-          <div className="text-sm font-semibold text-muted-foreground mb-2">
-            Auto-Coders: {autoCodeClicks.toFixed(1)}/sec
+          <div className="text-sm font-semibold text-primary mb-2">
+            SCALING
           </div>
-          {upgrades.map(upgrade => {
-            const canAfford = cash >= upgrade.cost;
-            const isUnlocked = !upgrade.unlockAt || linesOfCode >= upgrade.unlockAt;
-            
-            if (!isUnlocked) return null;
-
-            return (
-              <Button
-                key={upgrade.id}
-                onClick={() => buyUpgrade(upgrade.id)}
-                disabled={!canAfford}
-                variant="outline"
-                className="w-full text-left justify-between border-primary/40 hover:bg-primary/10"
-              >
-                <span>
-                  {upgrade.name}
-                  {upgrade.owned > 0 && ` (${upgrade.owned})`}
-                </span>
-                <span className="font-mono">${upgrade.cost}</span>
-              </Button>
-            );
-          })}
+          <div className="p-3 bg-slate-950 rounded-lg border border-primary/30">
+            <div className="mb-2">
+              <div className="text-sm font-semibold text-foreground">
+                Hire Junior Dev
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Auto-codes 1/sec • Owned: {autoCoderLevel}
+              </div>
+            </div>
+            <Button
+              onClick={buyAutoCoder}
+              disabled={cash < autoCoderCost}
+              variant="default"
+              className="w-full bg-primary hover:bg-primary/80 text-slate-950 font-mono font-bold"
+            >
+              ${autoCoderCost.toFixed(0)}
+            </Button>
+          </div>
         </div>
       )}
     </Card>

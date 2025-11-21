@@ -7,131 +7,95 @@ export interface Upgrade {
   name: string;
   cost: number;
   owned: number;
-  unlockAt?: number; // Lines of code needed to unlock
-  autoCodeRate?: number; // Auto clicks per second
 }
 
 interface GameState {
-  // Resources (Wire equivalent)
-  cloudCredits: number;
-  cloudCreditCost: number; // Volatile pricing
-  
-  // Product (Paperclips equivalent)
-  linesOfCode: number;
-  unsoldCode: number;
-  
-  // Market
+  // Core Resources
   cash: number;
+  linesOfCode: number;
+  cloudCredits: number;
+  
+  // Market Variables
   price: number;
+  publicDemand: number;
   marketingLevel: number;
-  demand: number;
+  cloudCreditCost: number;
   
   // Automation
-  autoCodeClicks: number;
+  autoCoderLevel: number;
   
-  // Stage
+  // Game State
   gameStage: GameStage;
   isBankrupt: boolean;
   isVictory: boolean;
   logs: string[];
-  upgrades: Upgrade[];
+  tickCount: number;
 }
 
 interface GameContextType extends GameState {
   writeCode: () => void;
-  buyCloudCredits: (amount: number) => void;
+  buyCloudCredits: () => void;
   increasePrice: () => void;
   decreasePrice: () => void;
-  buyUpgrade: (upgradeId: string) => void;
+  buyAutoCoder: () => void;
   buyMarketing: () => void;
   restartGame: () => void;
   addLog: (message: string) => void;
 }
 
-const initialUpgrades: Upgrade[] = [
-  {
-    id: 'autocoder1',
-    name: 'AutoCoder Mk1',
-    cost: 100,
-    owned: 0,
-    unlockAt: 50,
-    autoCodeRate: 1,
-  },
-  {
-    id: 'autocoder2',
-    name: 'AutoCoder Mk2',
-    cost: 500,
-    owned: 0,
-    unlockAt: 200,
-    autoCodeRate: 5,
-  },
-  {
-    id: 'megacoder',
-    name: 'MegaCoder',
-    cost: 2500,
-    owned: 0,
-    unlockAt: 1000,
-    autoCodeRate: 25,
-  },
-];
-
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
-  // Resources
-  const [cloudCredits, setCloudCredits] = useState(1000);
-  const [cloudCreditCost, setCloudCreditCost] = useState(20);
-  
-  // Product
+  // EXACT STARTING STATE (Universal Paperclips clone)
+  const [cash, setCash] = useState(0.00);
   const [linesOfCode, setLinesOfCode] = useState(0);
-  const [unsoldCode, setUnsoldCode] = useState(0);
-  
-  // Market
-  const [cash, setCash] = useState(0);
+  const [cloudCredits, setCloudCredits] = useState(1000);
   const [price, setPrice] = useState(0.25);
+  const [publicDemand, setPublicDemand] = useState(30);
   const [marketingLevel, setMarketingLevel] = useState(1);
-  const [demand, setDemand] = useState(0);
-  
-  // Automation
-  const [autoCodeClicks, setAutoCodeClicks] = useState(0);
+  const [cloudCreditCost, setCloudCreditCost] = useState(20);
+  const [autoCoderLevel, setAutoCoderLevel] = useState(0);
   
   // Game State
   const [gameStage, setGameStage] = useState<GameStage>('BOOTSTRAP');
   const [isBankrupt, setIsBankrupt] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
-  const [logs, setLogs] = useState<string[]>(['> System initialized. Start writing code.']);
-  const [upgrades, setUpgrades] = useState<Upgrade[]>(initialUpgrades);
+  const [logs, setLogs] = useState<string[]>(['> System initialized. Start coding.']);
+  const [tickCount, setTickCount] = useState(0);
 
   const addLog = (message: string) => {
     setLogs(prev => [...prev.slice(-9), `> ${message}`]);
   };
 
+  // ACTION 1: Write Code (Make Paperclip)
   const writeCode = () => {
-    if (cloudCredits <= 0) return;
+    if (cloudCredits < 1) return;
     
     setCloudCredits(prev => prev - 1);
-    setUnsoldCode(prev => prev + 1);
     setLinesOfCode(prev => prev + 1);
     
     // Stage progression
-    if (linesOfCode === 50) {
+    if (linesOfCode === 50 && gameStage === 'BOOTSTRAP') {
       setGameStage('MARKET');
-      addLog('📊 Market unlocked! Set your price.');
+      addLog('📊 Market unlocked!');
     }
-    if (linesOfCode === 500) {
+    if (linesOfCode === 500 && gameStage === 'MARKET') {
       setGameStage('SCALE');
-      addLog('🚀 Scaling phase! Automate production.');
+      addLog('🚀 Automation unlocked!');
     }
   };
 
-  const buyCloudCredits = (amount: number) => {
-    const cost = amount * cloudCreditCost;
+  // ACTION 2: Buy Cloud Credits (Buy Wire)
+  const buyCloudCredits = () => {
+    const cost = cloudCreditCost * 1000;
     if (cash < cost) return;
     
     setCash(prev => prev - cost);
-    setCloudCredits(prev => prev + amount);
+    setCloudCredits(prev => prev + 1000);
+    addLog(`Purchased 1000 credits for $${cost.toFixed(0)}`);
   };
 
+  // ACTION 3: Adjust Price
   const increasePrice = () => {
     setPrice(prev => Math.min(prev + 0.01, 10));
   };
@@ -140,125 +104,122 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     setPrice(prev => Math.max(prev - 0.01, 0.01));
   };
 
-  const buyUpgrade = (upgradeId: string) => {
-    const upgrade = upgrades.find(u => u.id === upgradeId);
-    if (!upgrade || cash < upgrade.cost) return;
-    if (upgrade.unlockAt && linesOfCode < upgrade.unlockAt) return;
-
-    setCash(prev => prev - upgrade.cost);
+  // Buy Auto-Coder (AutoClipper)
+  const buyAutoCoder = () => {
+    const cost = 60 * Math.pow(1.1, autoCoderLevel);
+    if (cash < cost) return;
     
-    setUpgrades(prev => prev.map(u => {
-      if (u.id === upgradeId) {
-        const newOwned = u.owned + 1;
-        return { 
-          ...u, 
-          owned: newOwned, 
-          cost: Math.floor(u.cost * 1.2) 
-        };
-      }
-      return u;
-    }));
-
-    if (upgrade.autoCodeRate) {
-      setAutoCodeClicks(prev => prev + upgrade.autoCodeRate!);
-      addLog(`Automation +${upgrade.autoCodeRate}/sec`);
-    }
+    setCash(prev => prev - cost);
+    setAutoCoderLevel(prev => prev + 1);
+    addLog(`Hired Auto-Coder #${autoCoderLevel + 1}`);
   };
 
+  // Buy Marketing Upgrade
   const buyMarketing = () => {
     const cost = 100 * Math.pow(2, marketingLevel - 1);
     if (cash < cost) return;
     
     setCash(prev => prev - cost);
     setMarketingLevel(prev => prev + 1);
-    addLog('📣 Marketing level increased!');
+    addLog(`Marketing upgraded to Level ${marketingLevel + 1}`);
   };
 
   const restartGame = () => {
-    setCloudCredits(1000);
-    setCloudCreditCost(20);
-    setLinesOfCode(0);
-    setUnsoldCode(0);
     setCash(0);
+    setLinesOfCode(0);
+    setCloudCredits(1000);
     setPrice(0.25);
+    setPublicDemand(30);
     setMarketingLevel(1);
-    setDemand(0);
-    setAutoCodeClicks(0);
+    setCloudCreditCost(20);
+    setAutoCoderLevel(0);
     setGameStage('BOOTSTRAP');
     setIsBankrupt(false);
     setIsVictory(false);
-    setLogs(['> System initialized. Start writing code.']);
-    setUpgrades(initialUpgrades);
+    setLogs(['> System initialized. Start coding.']);
+    setTickCount(0);
   };
 
-  // Game Loop (100ms tick - Universal Paperclips style)
+  // THE GAME LOOP (100ms tick - 10 ticks per second)
   useEffect(() => {
     if (isBankrupt || isVictory) return;
 
     const interval = setInterval(() => {
-      // PHASE 1: Automated Code Writing
-      if (autoCodeClicks > 0 && cloudCredits > 0) {
-        const ticksPerSecond = autoCodeClicks / 10; // Divide by 10 because 100ms tick
-        const creditsUsed = Math.min(ticksPerSecond, cloudCredits);
+      setTickCount(prev => prev + 1);
+      
+      // A. CALCULATE DEMAND (The Golden Formula)
+      // demand = (0.8 / price) * (1.1 ^ (marketingLevel - 1))
+      const calculatedDemand = (0.8 / price) * Math.pow(1.1, marketingLevel - 1);
+      setPublicDemand(calculatedDemand);
+      
+      // B. SALES LOGIC (Probabilistic)
+      if (linesOfCode > 0) {
+        const transactionVolume = Math.floor(calculatedDemand / 10); // Divided by 10 because 100ms tick
         
-        setCloudCredits(prev => prev - creditsUsed);
-        setUnsoldCode(prev => prev + creditsUsed);
-        setLinesOfCode(prev => prev + creditsUsed);
+        if (transactionVolume > 0 && linesOfCode >= transactionVolume) {
+          setLinesOfCode(prev => Math.max(0, prev - transactionVolume));
+          setCash(prev => prev + (price * transactionVolume));
+        }
       }
       
-      // PHASE 2: Calculate Demand (Universal Paperclips formula)
-      // Demand = (MarketingLevel / Price)
-      const calculatedDemand = marketingLevel / Math.max(price, 0.01);
-      setDemand(calculatedDemand);
-      
-      // PHASE 3: Automatic Sales
-      if (unsoldCode > 0 && calculatedDemand > 0) {
-        const soldThisTick = Math.min(unsoldCode, calculatedDemand / 10);
+      // C. AUTO-CODER PRODUCTION
+      if (autoCoderLevel > 0 && cloudCredits > 0) {
+        const autoProduction = autoCoderLevel / 10; // Divided by 10 for 100ms tick
         
-        setUnsoldCode(prev => Math.max(0, prev - soldThisTick));
-        setCash(prev => prev + (soldThisTick * price));
-      }
-      
-      // PHASE 4: Cloud Credit Cost Volatility (fluctuates like Wire in original)
-      if (Math.random() < 0.05) { // 5% chance per tick
-        setCloudCreditCost(prev => {
-          const change = (Math.random() - 0.5) * 4; // ±2
-          return Math.max(15, Math.min(30, prev + change));
+        setCloudCredits(prev => {
+          const consumed = Math.min(autoProduction, prev);
+          return prev - consumed;
         });
+        setLinesOfCode(prev => prev + autoProduction);
       }
       
-      // Victory condition
+      // D. COST FLUCTUATION (Every 25 ticks = 2.5 seconds)
+      setTickCount(prevTick => {
+        if (prevTick % 25 === 0) {
+          const baseCost = 20;
+          const fluctuation = Math.sin(Date.now() / 1000) * 5;
+          const newCost = Math.max(15, Math.min(25, baseCost + fluctuation));
+          setCloudCreditCost(newCost);
+        }
+        return prevTick;
+      });
+      
+      // VICTORY CONDITION
       if (cash >= 1000000 && !isVictory) {
         setIsVictory(true);
         setGameStage('UNICORN');
-        addLog('🦄 $1M REACHED! You win!');
+        addLog('🦄 $1M REACHED!');
       }
-    }, 100); // 100ms tick
+      
+      // BANKRUPTCY WARNING
+      if (cloudCredits <= 0 && cash < 50 && autoCoderLevel === 0) {
+        addLog('⚠️ Out of resources! Sell code or buy credits!');
+      }
+    }, 100); // 100ms = 10 ticks per second
 
     return () => clearInterval(interval);
-  }, [autoCodeClicks, cloudCredits, unsoldCode, price, marketingLevel, demand, cash, isBankrupt, isVictory, linesOfCode]);
+  }, [linesOfCode, cloudCredits, price, marketingLevel, autoCoderLevel, cash, isBankrupt, isVictory]);
 
   return (
     <GameContext.Provider value={{
-      cloudCredits,
-      cloudCreditCost,
-      linesOfCode,
-      unsoldCode,
       cash,
+      linesOfCode,
+      cloudCredits,
       price,
+      publicDemand,
       marketingLevel,
-      demand,
-      autoCodeClicks,
+      cloudCreditCost,
+      autoCoderLevel,
       gameStage,
       isBankrupt,
       isVictory,
       logs,
-      upgrades,
+      tickCount,
       writeCode,
       buyCloudCredits,
       increasePrice,
       decreasePrice,
-      buyUpgrade,
+      buyAutoCoder,
       buyMarketing,
       restartGame,
       addLog,
