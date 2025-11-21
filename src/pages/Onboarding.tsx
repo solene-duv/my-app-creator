@@ -65,6 +65,14 @@ const Onboarding = () => {
         className="max-w-6xl w-full space-y-12"
       >
         <div className="text-center space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="font-display text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#00E676] to-[#7C4DFF] bg-clip-text text-transparent mb-8"
+          >
+            Play Paribas
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
