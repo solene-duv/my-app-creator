@@ -152,13 +152,15 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       const calculatedDemand = (0.8 / price) * Math.pow(1.1, marketingLevel - 1);
       setPublicDemand(calculatedDemand);
       
-      // B. SALES LOGIC (Probabilistic)
+      // B. SALES LOGIC (Probabilistic per tick)
       if (linesOfCode > 0) {
-        const transactionVolume = Math.floor(calculatedDemand / 10); // Divided by 10 because 100ms tick
+        // Demand per second, divide by 10 for 100ms tick rate
+        const demandPerTick = calculatedDemand / 10;
         
-        if (transactionVolume > 0 && linesOfCode >= transactionVolume) {
-          setLinesOfCode(prev => Math.max(0, prev - transactionVolume));
-          setCash(prev => prev + (price * transactionVolume));
+        // Probabilistic: always try to sell at least some based on demand
+        if (Math.random() * 10 < demandPerTick) {
+          setLinesOfCode(prev => Math.max(0, prev - 1));
+          setCash(prev => prev + price);
         }
       }
       
