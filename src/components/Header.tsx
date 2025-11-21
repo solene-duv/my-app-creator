@@ -34,19 +34,20 @@ const Header = ({ showLoginIcon = false }: HeaderProps) => {
             />
           </Link>
           <div className="flex items-center gap-3">
-            {showLoginIcon && (
+            {showLoginIcon ? (
               <Button 
-                variant="ghost" 
-                size="icon"
-                className="rounded-full text-white hover:bg-white/10 transition-colors"
+                variant="default"
+                size="sm"
+                className="rounded-full bg-white text-foreground hover:bg-white/90 px-6 py-2 font-medium transition-colors"
                 onClick={() => console.log('Login clicked')}
               >
-                <LogIn className="h-5 w-5" />
+                Log on
+              </Button>
+            ) : (
+              <Button variant="outline" className="rounded-full bg-white border-white hover:bg-white/90 text-foreground">
+                Se connecter
               </Button>
             )}
-            <Button variant="outline" className="rounded-full bg-white border-white hover:bg-white/90 text-foreground">
-              Se connecter
-            </Button>
           </div>
         </div>
       </div>
