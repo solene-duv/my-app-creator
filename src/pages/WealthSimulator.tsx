@@ -20,10 +20,12 @@ export interface Portfolio {
 const formatWealth = (value: number) => `€${value.toFixed(1)}K`;
 
 const WealthSimulator = () => {
-  const { exitPayout, hasExited } = useUnicornGame();
-  const navigate = useNavigate();
+  const { exitPayout } = useUnicornGame();
   
-  const [availableWealth, setAvailableWealth] = useState(exitPayout);
+  // Use exitPayout if available, otherwise default demo amount
+  const initialWealth = exitPayout > 0 ? exitPayout : 5000;
+  
+  const [availableWealth, setAvailableWealth] = useState(initialWealth);
   const [portfolio, setPortfolio] = useState<Portfolio>({
     lifeInsurance: 0,
     funds: 0,
@@ -34,12 +36,6 @@ const WealthSimulator = () => {
   
   const [selectedInvestment, setSelectedInvestment] = useState<keyof Portfolio | null>(null);
   const [showResults, setShowResults] = useState(false);
-  
-  // Redirect if user hasn't exited
-  if (!hasExited) {
-    navigate("/unicorn-game");
-    return null;
-  }
 
   const handleAllocate = (amount: number) => {
     if (!selectedInvestment) return;
@@ -68,8 +64,7 @@ const WealthSimulator = () => {
   };
 
   const handleReset = () => {
-    const totalAllocated = Object.values(portfolio).reduce((sum, val) => sum + val, 0);
-    setAvailableWealth(exitPayout);
+    setAvailableWealth(initialWealth);
     setPortfolio({
       lifeInsurance: 0,
       funds: 0,
@@ -116,7 +111,7 @@ const WealthSimulator = () => {
               {formatWealth(availableWealth)}
             </div>
             <div className="text-sm text-accent mt-2">
-              Total Exit: {formatWealth(exitPayout)}
+              Total Exit: {formatWealth(initialWealth)}
             </div>
           </div>
         </div>
