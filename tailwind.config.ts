@@ -15,6 +15,8 @@ export default {
     extend: {
       fontFamily: {
         'handwritten': ['Caveat', 'cursive'],
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'display': ['Syne', 'Inter', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
