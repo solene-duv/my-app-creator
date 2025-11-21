@@ -19,53 +19,53 @@ interface Reward {
 const rewards: Reward[] = [
   {
     id: 1,
-    title: 'K-BIS Creation',
-    description: 'Free company registration and legal documentation',
+    title: 'Création K-BIS',
+    description: 'Immatriculation gratuite d\'entreprise et documents légaux',
     xpCost: 1000,
     capitalRequired: 1000,
-    badge: 'POPULAR',
+    badge: 'POPULAIRE',
     icon: '🏢',
     gradient: 'from-[#00E676] to-[#00C853]'
   },
   {
     id: 2,
-    title: 'Tax Audit by AI',
-    description: 'Comprehensive tax optimization analysis',
+    title: 'Audit Fiscal par IA',
+    description: 'Analyse complète d\'optimisation fiscale',
     xpCost: 500,
-    badge: 'SMART',
+    badge: 'INTELLIGENT',
     icon: '📊',
     gradient: 'from-[#7C4DFF] to-[#651FFF]'
   },
   {
     id: 3,
-    title: 'Coffee with a VC',
-    description: 'Exclusive 1-hour mentorship session',
+    title: 'Café avec un VC',
+    description: 'Session de mentorat exclusive d\'1 heure',
     xpCost: 5000,
-    badge: 'LEGENDARY',
+    badge: 'LÉGENDAIRE',
     icon: '☕',
     gradient: 'from-[#FFD700] to-[#FFA500]'
   },
   {
     id: 4,
     title: 'VIP Roland Garros',
-    description: 'Premium seats at Roland Garros tournament',
+    description: 'Places premium au tournoi de Roland Garros',
     xpCost: 8000,
-    badge: 'EXCLUSIVE',
+    badge: 'EXCLUSIF',
     icon: '🎾',
     gradient: 'from-[#FF6B6B] to-[#C92A2A]'
   },
   {
     id: 5,
-    title: 'Private Banking Onboarding',
-    description: 'Fast-track access to premium banking services',
+    title: 'Onboarding Banque Privée',
+    description: 'Accès rapide aux services bancaires premium',
     xpCost: 3000,
     icon: '💳',
     gradient: 'from-[#00E5FF] to-[#00B8D4]'
   },
   {
     id: 6,
-    title: 'Startup Legal Pack',
-    description: 'Complete legal templates and contracts',
+    title: 'Pack Juridique Startup',
+    description: 'Modèles et contrats juridiques complets',
     xpCost: 1500,
     icon: '📝',
     gradient: 'from-[#9C27B0] to-[#7B1FA2]'
@@ -80,8 +80,8 @@ const Marketplace = () => {
   const handleRedeem = (reward: Reward) => {
     if (xpPoints < reward.xpCost) {
       toast({
-        title: "⚠️ Insufficient XP",
-        description: `You need ${reward.xpCost - xpPoints} more XP to unlock this reward.`,
+        title: "⚠️ XP Insuffisants",
+        description: `Il te manque ${reward.xpCost - xpPoints} XP pour débloquer cette récompense.`,
         variant: "destructive",
       });
       return;
@@ -89,16 +89,16 @@ const Marketplace = () => {
 
     if (reward.capitalRequired && capitalSaved < reward.capitalRequired) {
       toast({
-        title: "⚠️ Capital Required",
-        description: `You need €${reward.capitalRequired - capitalSaved} more in your savings.`,
+        title: "⚠️ Capital Requis",
+        description: `Il te manque ${reward.capitalRequired - capitalSaved}€ dans ton épargne.`,
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "🎉 Reward Unlocked!",
-      description: `${reward.title} is now available in your profile.`,
+      title: "🎉 Récompense Débloquée !",
+      description: `${reward.title} est maintenant disponible dans ton profil.`,
     });
   };
 
@@ -119,16 +119,16 @@ const Marketplace = () => {
         >
           <div>
             <h1 className="font-display text-5xl font-bold bg-gradient-to-r from-[#00E676] to-[#7C4DFF] bg-clip-text text-transparent mb-2">
-              Marketplace
+              BNP Investissement
             </h1>
-            <p className="text-white/60 text-lg">Spend XP. Get Real Perks.</p>
+            <p className="text-white/60 text-lg">Dépense tes XP. Obtiens de vraies récompenses.</p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="glass-card px-6 py-3 flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-[#7C4DFF]" />
               <div>
-                <div className="text-xs text-white/60">Your XP</div>
+                <div className="text-xs text-white/60">Tes XP</div>
                 <div className="text-2xl font-bold text-white">{xpPoints}</div>
               </div>
             </div>
@@ -138,7 +138,7 @@ const Marketplace = () => {
               onClick={() => navigate('/dashboard')}
               className="glass-card border-white/20 text-white hover:bg-white/10"
             >
-              Back
+              Retour
             </Button>
           </div>
         </motion.div>
@@ -153,17 +153,17 @@ const Marketplace = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2">
               <h2 className="font-display text-2xl font-bold text-white">
-                Connect Your Real BNP Account
+                Connecte ton Compte BNP Réel
               </h2>
               <p className="text-white/60">
-                Link your account to redeem rewards and track real savings
+                Lie ton compte pour échanger des récompenses et suivre ton épargne réelle
               </p>
             </div>
             <Button
               size="lg"
               className="rounded-full bg-gradient-to-r from-[#00E676] to-[#00C853] hover:from-[#00C853] hover:to-[#00E676] text-black font-bold whitespace-nowrap"
             >
-              Connect Account
+              Connecter le Compte
             </Button>
           </div>
         </motion.div>
@@ -217,7 +217,7 @@ const Marketplace = () => {
                   {/* Pricing */}
                   <div className="pt-4 border-t border-white/10 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-white/60 text-sm">Cost</span>
+                      <span className="text-white/60 text-sm">Coût</span>
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-[#7C4DFF]" />
                         <span className="font-bold text-white">{reward.xpCost} XP</span>
@@ -226,9 +226,9 @@ const Marketplace = () => {
                     
                     {reward.capitalRequired && (
                       <div className="flex items-center justify-between">
-                        <span className="text-white/60 text-sm">Required</span>
+                        <span className="text-white/60 text-sm">Requis</span>
                         <span className="font-semibold text-[#00E676]">
-                          €{reward.capitalRequired} saved
+                          {reward.capitalRequired}€ épargnés
                         </span>
                       </div>
                     )}
@@ -244,7 +244,7 @@ const Marketplace = () => {
                         : 'bg-white/5 text-white/40'
                     }`}
                   >
-                    {affordable ? 'Redeem' : 'Locked'}
+                    {affordable ? 'Échanger' : 'Verrouillé'}
                   </Button>
                 </div>
               </motion.div>

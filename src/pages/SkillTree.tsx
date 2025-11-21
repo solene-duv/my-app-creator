@@ -24,20 +24,20 @@ const SkillTree = () => {
 
   const skills: Record<string, SkillNode[]> = {
     FOUNDER: [
-      { id: 1, title: 'Cashflow Basics', status: 'completed', icon: '💰', archetype: 'FOUNDER' },
-      { id: 2, title: 'Term Sheet Negotiation', status: 'unlocked', icon: '📄', archetype: 'FOUNDER' },
-      { id: 3, title: 'Exit Strategy', status: 'locked', icon: '🚀', archetype: 'FOUNDER' },
-      { id: 4, title: 'Dilution Defense', status: 'locked', icon: '🛡️', archetype: 'FOUNDER' },
+      { id: 1, title: 'Les Bases du Cashflow', status: 'completed', icon: '💰', archetype: 'FOUNDER' },
+      { id: 2, title: 'Négociation de Term Sheet', status: 'unlocked', icon: '📄', archetype: 'FOUNDER' },
+      { id: 3, title: 'Stratégie de Sortie', status: 'locked', icon: '🚀', archetype: 'FOUNDER' },
+      { id: 4, title: 'Défense contre la Dilution', status: 'locked', icon: '🛡️', archetype: 'FOUNDER' },
     ],
     EARNER: [
-      { id: 1, title: 'Tax Optimization', status: 'completed', icon: '📊', archetype: 'EARNER' },
-      { id: 2, title: 'BSPCE Simulator', status: 'unlocked', icon: '💎', archetype: 'EARNER' },
-      { id: 3, title: 'Angel Investing', status: 'locked', icon: '👼', archetype: 'EARNER' },
+      { id: 1, title: 'Optimisation Fiscale', status: 'completed', icon: '📊', archetype: 'EARNER' },
+      { id: 2, title: 'Simulateur BSPCE', status: 'unlocked', icon: '💎', archetype: 'EARNER' },
+      { id: 3, title: 'Investissement Business Angel', status: 'locked', icon: '👼', archetype: 'EARNER' },
     ],
     HEIR: [
       { id: 1, title: 'Family Office 101', status: 'completed', icon: '🏛️', archetype: 'HEIR' },
-      { id: 2, title: 'Greenwashing Detector', status: 'unlocked', icon: '🌱', archetype: 'HEIR' },
-      { id: 3, title: 'Impact Investing', status: 'locked', icon: '🌍', archetype: 'HEIR' },
+      { id: 2, title: 'Détecteur de Greenwashing', status: 'unlocked', icon: '🌱', archetype: 'HEIR' },
+      { id: 3, title: 'Investissement à Impact', status: 'locked', icon: '🌍', archetype: 'HEIR' },
     ],
   };
 
@@ -55,8 +55,8 @@ const SkillTree = () => {
 
     addXP(xpGain);
     toast({
-      title: dealQuality === 'excellent' ? '🎉 Excellent Negotiation!' : dealQuality === 'good' ? '👍 Good Deal!' : '✅ Fair Deal',
-      description: `You negotiated ${equityOffer[0]}% equity. +${xpGain} XP`,
+      title: dealQuality === 'excellent' ? '🎉 Excellente Négociation !' : dealQuality === 'good' ? '👍 Bon Deal !' : '✅ Deal Correct',
+      description: `Tu as négocié ${equityOffer[0]}% d'équité. +${xpGain} XP`,
     });
 
     setSelectedNode(null);
@@ -73,15 +73,15 @@ const SkillTree = () => {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="font-display text-4xl font-bold text-white mb-2">Skill Tree</h1>
-            <p className="text-white/60">Master your financial journey</p>
+            <h1 className="font-display text-4xl font-bold text-white mb-2">Arbre de Compétences</h1>
+            <p className="text-white/60">Maîtrise ton parcours financier</p>
           </div>
           <Button
             variant="outline"
             onClick={() => navigate('/dashboard')}
             className="glass-card border-white/20 text-white hover:bg-white/10"
           >
-            Back
+            Retour
           </Button>
         </motion.div>
 
@@ -141,9 +141,9 @@ const SkillTree = () => {
                           {node.title}
                         </h3>
                         <p className="text-sm text-white/60">
-                          {node.status === 'completed' && '✅ Completed'}
-                          {node.status === 'unlocked' && '🔓 Click to start'}
-                          {node.status === 'locked' && '🔒 Complete previous skills'}
+                          {node.status === 'completed' && '✅ Terminé'}
+                          {node.status === 'unlocked' && '🔓 Clique pour commencer'}
+                          {node.status === 'locked' && '🔒 Termine les compétences précédentes'}
                         </p>
                       </div>
                       {node.status === 'unlocked' && (
@@ -179,7 +179,7 @@ const SkillTree = () => {
                     <h2 className="font-display text-3xl font-bold text-white mb-2">
                       {selectedNode.title}
                     </h2>
-                    <p className="text-white/60">Interactive Simulation</p>
+                    <p className="text-white/60">Simulation Interactive</p>
                   </div>
                   <button
                     onClick={() => setSelectedNode(null)}
@@ -193,17 +193,17 @@ const SkillTree = () => {
                   {/* Scenario */}
                   <div className="p-6 rounded-2xl bg-gradient-to-br from-[#7C4DFF]/10 to-[#00E676]/10 border border-white/10">
                     <p className="text-white text-lg">
-                      📊 An investor offers <span className="text-[#00E676] font-bold">€500,000</span> for{' '}
-                      <span className="text-[#7C4DFF] font-bold">{equityOffer[0]}%</span> equity.
+                      📊 Un investisseur offre <span className="text-[#00E676] font-bold">500 000€</span> pour{' '}
+                      <span className="text-[#7C4DFF] font-bold">{equityOffer[0]}%</span> d&apos;équité.
                     </p>
-                    <p className="text-white/60 mt-2">Drag the slider to negotiate your best deal.</p>
+                    <p className="text-white/60 mt-2">Fais glisser le curseur pour négocier ton meilleur deal.</p>
                   </div>
 
                   {/* Slider */}
                   <div className="space-y-4">
                     <div className="flex justify-between text-sm text-white/60">
-                      <span>Less Equity</span>
-                      <span>More Equity</span>
+                      <span>Moins d&apos;Équité</span>
+                      <span>Plus d&apos;Équité</span>
                     </div>
                     <Slider
                       value={equityOffer}
@@ -225,9 +225,9 @@ const SkillTree = () => {
                   {/* Feedback */}
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                     <p className="text-white/80 text-sm">
-                      {equityOffer[0] <= 15 && '🎯 Excellent negotiation! You maintain strong ownership.'}
-                      {equityOffer[0] > 15 && equityOffer[0] <= 20 && '👍 Good deal! Balanced equity split.'}
-                      {equityOffer[0] > 20 && '⚠️ Consider negotiating for less equity dilution.'}
+                      {equityOffer[0] <= 15 && '🎯 Excellente négociation ! Tu maintiens une participation forte.'}
+                      {equityOffer[0] > 15 && equityOffer[0] <= 20 && '👍 Bon deal ! Répartition équilibrée.'}
+                      {equityOffer[0] > 20 && '⚠️ Envisage de négocier pour moins de dilution.'}
                     </p>
                   </div>
 
@@ -236,7 +236,7 @@ const SkillTree = () => {
                     size="lg"
                     className="w-full rounded-full bg-gradient-to-r from-[#00E676] to-[#00C853] hover:from-[#00C853] hover:to-[#00E676] text-black font-bold"
                   >
-                    Complete Simulation
+                    Terminer la Simulation
                   </Button>
                 </div>
               </motion.div>

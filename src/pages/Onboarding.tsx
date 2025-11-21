@@ -17,25 +17,25 @@ const archetypes: ArchetypeCard[] = [
   {
     id: 'FOUNDER',
     icon: Rocket,
-    title: 'The Founder',
-    description: 'Launch a Startup.',
-    tag: 'High Risk',
+    title: 'Le Fondateur',
+    description: 'Lancer une Startup.',
+    tag: 'Haut Risque',
     gradient: 'from-[#00E676] to-[#00C853]'
   },
   {
     id: 'EARNER',
     icon: Diamond,
-    title: 'The Equity Earner',
-    description: 'Optimize my BSPCE.',
-    tag: 'Smart Wealth',
+    title: "L'Investisseur Actions",
+    description: 'Optimiser mes BSPCE.',
+    tag: 'Richesse Intelligente',
     gradient: 'from-[#7C4DFF] to-[#651FFF]'
   },
   {
     id: 'HEIR',
     icon: Leaf,
-    title: 'The Impact Heir',
-    description: 'Invest Responsibly.',
-    tag: 'Legacy',
+    title: "L'Héritier Responsable",
+    description: 'Investir de manière responsable.',
+    tag: 'Héritage',
     gradient: 'from-[#00E5FF] to-[#00B8D4]'
   }
 ];
@@ -71,7 +71,7 @@ const Onboarding = () => {
             transition={{ delay: 0.2 }}
             className="font-display text-6xl md:text-8xl font-bold bg-gradient-to-r from-[#00E676] to-[#7C4DFF] bg-clip-text text-transparent"
           >
-            Stop Saving.
+            Arrête d&apos;épargner.
           </motion.h1>
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
@@ -79,7 +79,7 @@ const Onboarding = () => {
             transition={{ delay: 0.3 }}
             className="font-display text-5xl md:text-7xl font-bold text-white"
           >
-            Start Building.
+            Commence à construire.
           </motion.h2>
         </div>
 
@@ -131,7 +131,7 @@ const Onboarding = () => {
           transition={{ delay: 0.8 }}
           className="text-center text-white/40 text-sm"
         >
-          Choose your path. Build your legacy.
+          Choisis ton parcours. Construis ton héritage.
         </motion.p>
       </motion.div>
     </div>

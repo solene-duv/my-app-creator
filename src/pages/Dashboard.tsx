@@ -28,8 +28,8 @@ const Dashboard = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       toast({
-        title: "🚀 New Quest Available!",
-        description: "Analyze your Burn Rate (+200 XP)",
+        title: "🚀 Nouvelle Quête Disponible !",
+        description: "Analyse ton Burn Rate (+200 XP)",
       });
     }, 5000);
     return () => clearTimeout(timer);
@@ -38,21 +38,21 @@ const Dashboard = () => {
   const handleAddCapital = () => {
     addCapital(50);
     toast({
-      title: "💰 Capital Added!",
-      description: "+€50 to your seed fund (+50 XP)",
+      title: "💰 Capital Ajouté !",
+      description: "+50€ à ton fonds de démarrage (+50 XP)",
     });
 
     if (capitalSaved + 50 >= capitalTarget) {
       setTimeout(() => {
         toast({
-          title: "🎉 MILESTONE UNLOCKED!",
-          description: "Company Incorporation Available!",
+          title: "🎉 OBJECTIF ATTEINT !",
+          description: "Création d'entreprise disponible !",
         });
       }, 500);
     }
   };
 
-  const levelTitle = level === 1 ? "Bootstrapper" : "Entrepreneur";
+  const levelTitle = level === 1 ? "Débutant" : "Entrepreneur";
 
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
@@ -63,13 +63,13 @@ const Dashboard = () => {
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           className="flex gap-8 py-2 text-sm text-white/60"
         >
-          <span>Sarah just unlocked 'Term Sheet' Master Class</span>
+          <span>Sarah vient de débloquer la Master Class &apos;Term Sheet&apos;</span>
           <span>•</span>
-          <span>Tom just opened his Pro Account</span>
+          <span>Tom vient d&apos;ouvrir son compte Pro</span>
           <span>•</span>
-          <span>Emma reached Level 5</span>
+          <span>Emma a atteint le niveau 5</span>
           <span>•</span>
-          <span>Alex completed 'Exit Strategy' simulation</span>
+          <span>Alex a terminé la simulation &apos;Stratégie de sortie&apos;</span>
           <span>•</span>
         </motion.div>
       </div>
@@ -101,7 +101,7 @@ const Dashboard = () => {
 
           <div className="flex items-center gap-2 glass-card px-4 py-2">
             <Flame className="w-5 h-5 text-orange-500" />
-            <span className="text-white font-semibold">{streak} Day Streak</span>
+            <span className="text-white font-semibold">{streak} jours d&apos;affilée</span>
           </div>
         </motion.div>
 
@@ -117,9 +117,9 @@ const Dashboard = () => {
           <div className="relative z-10 space-y-8">
             <div className="text-center space-y-2">
               <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-                Incorporation Capital
+                Capital de Création
               </h2>
-              <p className="text-white/60">Your path to company creation</p>
+              <p className="text-white/60">Ton chemin vers la création d&apos;entreprise</p>
             </div>
 
             <div className="flex items-center justify-center">
@@ -181,7 +181,7 @@ const Dashboard = () => {
                 className="rounded-full bg-gradient-to-r from-[#00E676] to-[#00C853] hover:from-[#00C853] hover:to-[#00E676] text-black font-bold text-lg px-8 shadow-lg shadow-[#00E676]/20"
               >
                 <Plus className="w-5 h-5 mr-2" />
-                Add €50
+                Ajouter 50€
               </Button>
             </div>
 
@@ -192,7 +192,7 @@ const Dashboard = () => {
                 className="text-center p-4 rounded-2xl bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/20"
               >
                 <p className="text-2xl font-bold text-yellow-400">
-                  🎉 Company Incorporation UNLOCKED!
+                  🎉 Création d&apos;entreprise DÉBLOQUÉE !
                 </p>
               </motion.div>
             )}
@@ -214,8 +214,8 @@ const Dashboard = () => {
                 <TrendingUp className="w-6 h-6 text-[#7C4DFF]" />
               </div>
               <div>
-                <h3 className="font-display text-xl font-bold text-white mb-2">Skill Tree</h3>
-                <p className="text-white/60 text-sm">Master financial strategies</p>
+                <h3 className="font-display text-xl font-bold text-white mb-2">Arbre de Compétences</h3>
+                <p className="text-white/60 text-sm">Maîtrise les stratégies financières</p>
               </div>
             </div>
           </motion.div>
@@ -233,8 +233,8 @@ const Dashboard = () => {
                 <Plus className="w-6 h-6 text-[#00E676]" />
               </div>
               <div>
-                <h3 className="font-display text-xl font-bold text-white mb-2">Marketplace</h3>
-                <p className="text-white/60 text-sm">Redeem real-world rewards</p>
+                <h3 className="font-display text-xl font-bold text-white mb-2">BNP Investissement</h3>
+                <p className="text-white/60 text-sm">Échange tes récompenses réelles</p>
               </div>
             </div>
           </motion.div>
@@ -251,8 +251,8 @@ const Dashboard = () => {
                 <span className="text-2xl">👤</span>
               </div>
               <div>
-                <h3 className="font-display text-xl font-bold text-white mb-2">Profile</h3>
-                <p className="text-white/60 text-sm">View your achievements</p>
+                <h3 className="font-display text-xl font-bold text-white mb-2">Profil</h3>
+                <p className="text-white/60 text-sm">Vois tes accomplissements</p>
               </div>
             </div>
           </motion.div>
@@ -273,10 +273,10 @@ const Dashboard = () => {
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm text-white/90">
-                    Hey! Based on your goal, you should deposit <span className="text-[#00E676] font-semibold">€50</span> to reach your target by Friday.
+                    Hey ! Selon ton objectif, tu devrais déposer <span className="text-[#00E676] font-semibold">50€</span> pour atteindre ta cible d&apos;ici vendredi.
                   </p>
                   <button className="text-xs text-[#7C4DFF] hover:text-[#651FFF] font-semibold">
-                    Learn more →
+                    En savoir plus →
                   </button>
                 </div>
               </div>
