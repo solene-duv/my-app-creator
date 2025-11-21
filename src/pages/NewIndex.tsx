@@ -56,10 +56,12 @@ const NewIndex = () => {
       <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4 text-center">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Main Title */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight leading-tight">
-            Stop saving,
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-tight">
+            <span className="text-foreground">Stop saving,</span>
             <br />
-            start building
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              start building
+            </span>
           </h1>
 
           {/* Subtitle */}
