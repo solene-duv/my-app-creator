@@ -4,6 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GameProvider } from "./contexts/GameContext";
+import NewIndex from "./pages/NewIndex";
+import FounderJourney from "./pages/FounderJourney";
+import OwnerJourney from "./pages/OwnerJourney";
+import ImpactHeroJourney from "./pages/ImpactHeroJourney";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import SkillTree from "./pages/SkillTree";
@@ -21,7 +25,11 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Onboarding />} />
+            <Route path="/" element={<NewIndex />} />
+            <Route path="/founder-journey" element={<FounderJourney />} />
+            <Route path="/owner-journey" element={<OwnerJourney />} />
+            <Route path="/impact-hero-journey" element={<ImpactHeroJourney />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/skill-tree" element={<SkillTree />} />
             <Route path="/bnp-investissement" element={<Marketplace />} />
