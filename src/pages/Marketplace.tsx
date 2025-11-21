@@ -111,10 +111,21 @@ const Marketplace = () => {
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Play Paribas Title */}
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={() => navigate('/')}
+          className="font-display text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#00E676] to-[#7C4DFF] bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+        >
+          Play Paribas
+        </motion.h1>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
