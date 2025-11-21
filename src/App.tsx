@@ -8,6 +8,7 @@ import NewIndex from "./pages/NewIndex";
 import FounderJourney from "./pages/FounderJourney";
 import OwnerJourney from "./pages/OwnerJourney";
 import ImpactHeroJourney from "./pages/ImpactHeroJourney";
+import ContentLibrary from "./pages/ContentLibrary";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import SkillTree from "./pages/SkillTree";
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/founder-journey" element={<FounderJourney />} />
             <Route path="/owner-journey" element={<OwnerJourney />} />
             <Route path="/impact-hero-journey" element={<ImpactHeroJourney />} />
+            <Route path="/content-library" element={<ContentLibrary />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/skill-tree" element={<SkillTree />} />

@@ -11,6 +11,9 @@ const NewIndex = () => {
   const navigate = useNavigate();
 
   const handleQuizComplete = (profile: Profile) => {
+    // Mark onboarding as completed
+    localStorage.setItem("hasCompletedOnboarding", "true");
+    
     // Route to the appropriate journey page
     const routes: Record<Profile, string> = {
       founder: "/founder-journey",
@@ -23,6 +26,19 @@ const NewIndex = () => {
 
   const handleLoginClick = () => {
     console.log("Login clicked - placeholder interaction");
+  };
+
+  const handleStartClick = () => {
+    // Check if user has already completed onboarding
+    const hasCompleted = localStorage.getItem("hasCompletedOnboarding");
+    if (hasCompleted === "true") {
+      // User has already done quiz, take them to their last journey
+      // For now, default to founder, but you could store their profile
+      navigate("/founder-journey");
+    } else {
+      // Show quiz for first-time users
+      setShowQuiz(true);
+    }
   };
 
   if (showQuiz) {
@@ -38,7 +54,12 @@ const NewIndex = () => {
 
       {/* Header */}
       <header className="relative z-10 w-full py-6 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-end">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Logo Text */}
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            Play Paribas
+          </h2>
+          
           {/* Login Button */}
           <Button
             variant="ghost"
@@ -72,7 +93,7 @@ const NewIndex = () => {
           {/* CTA Button */}
           <div className="pt-8">
             <Button
-              onClick={() => setShowQuiz(true)}
+              onClick={handleStartClick}
               size="lg"
               className="bg-primary hover:bg-primary/90 text-slate-950 font-bold text-xl px-16 py-8 rounded-full shadow-2xl hover:shadow-primary/50 transition-all hover:scale-105 hover:-translate-y-1"
             >
