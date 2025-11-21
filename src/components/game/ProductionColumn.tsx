@@ -3,18 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export const ProductionColumn = () => {
-  const { 
+  const {
     funds,
-    unsoldInventory,
-    price,
-    publicDemand,
+    clips,
+    margin,
+    demand,
     marketingLevel,
     lowerPrice,
     raisePrice,
     buyMarketing,
+    getPrice,
+    getMarketingCost,
   } = useUnicornGame();
 
-  const marketingCost = 100 * Math.pow(2, marketingLevel - 1);
+  const price = getPrice();
+  const marketingCost = getMarketingCost();
 
   return (
     <Card className="p-6 bg-slate-900 border-primary/20">
@@ -34,7 +37,7 @@ export const ProductionColumn = () => {
       <div className="mb-4">
         <div className="text-sm text-muted-foreground">Unsold Inventory:</div>
         <div className="text-2xl font-mono font-bold text-accent">
-          {Math.floor(unsoldInventory)}
+          {Math.floor(clips)}
         </div>
       </div>
 
@@ -68,7 +71,7 @@ export const ProductionColumn = () => {
         <div className="mt-2">
           <div className="text-xs text-muted-foreground">Public Demand:</div>
           <div className="text-lg font-mono text-primary">
-            {Math.floor(publicDemand)}%
+            {Math.floor(demand)}
           </div>
         </div>
       </div>

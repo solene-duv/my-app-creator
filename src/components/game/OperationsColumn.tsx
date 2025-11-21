@@ -4,17 +4,17 @@ import { Card } from "@/components/ui/card";
 
 export const OperationsColumn = () => {
   const { 
-    clipsPerSecond,
+    clipmakerRate,
     wire,
     wireCost,
     funds,
-    autoClippers,
+    clipperLevel,
+    clipperCost,
     makeClip,
     buyWire,
     buyAutoClipper,
   } = useUnicornGame();
 
-  const autoClipperCost = 5 + Math.pow(1.1, autoClippers);
   const canMakeClip = wire >= 1;
 
   return (
@@ -27,7 +27,7 @@ export const OperationsColumn = () => {
       <div className="mb-4">
         <div className="text-sm text-muted-foreground">Clips per Second:</div>
         <div className="text-2xl font-mono font-bold text-primary">
-          {clipsPerSecond}
+          {clipmakerRate}
         </div>
       </div>
 
@@ -72,19 +72,19 @@ export const OperationsColumn = () => {
           <div>
             <div className="text-sm text-muted-foreground">AutoClippers</div>
             <div className="text-xl font-mono font-bold text-primary">
-              {autoClippers}
+              {clipperLevel}
             </div>
           </div>
           <div className="text-right">
             <div className="text-xs text-muted-foreground">Cost:</div>
             <div className="text-lg font-mono text-accent">
-              $ {autoClipperCost.toFixed(2)}
+              $ {clipperCost.toFixed(2)}
             </div>
           </div>
         </div>
         <Button
           onClick={buyAutoClipper}
-          disabled={funds < autoClipperCost}
+          disabled={funds < clipperCost}
           className="w-full bg-primary hover:bg-primary/80 text-slate-950 font-semibold"
         >
           AutoClipper

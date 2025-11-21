@@ -5,8 +5,8 @@ import { TerminalLog } from "./TerminalLog";
 export const CapTableColumn = () => {
   const { 
     funds,
-    unsoldInventory,
-    clipsPerSecond,
+    clips,
+    clipmakerRate,
   } = useUnicornGame();
 
   return (
@@ -26,13 +26,13 @@ export const CapTableColumn = () => {
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Inventory:</span>
           <span className="font-mono text-accent font-bold">
-            {Math.floor(unsoldInventory)}
+            {Math.floor(clips)}
           </span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Production:</span>
           <span className="font-mono text-primary font-bold">
-            {clipsPerSecond}/s
+            {clipmakerRate}/s
           </span>
         </div>
       </div>
