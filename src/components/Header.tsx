@@ -3,7 +3,7 @@ import { Globe } from "lucide-react";
 
 const Header = () => {
   return (
-    <header className="w-full bg-primary">
+    <header className="fixed top-0 left-0 right-0 w-full bg-primary/95 backdrop-blur-md shadow-lg z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
