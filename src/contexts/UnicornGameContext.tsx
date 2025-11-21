@@ -147,8 +147,8 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const canExit = () => {
-    // Exit condition: funds >= 1000K (representing unicorn status)
-    return funds >= 1000 && !hasExited;
+    // Exit available at any time
+    return !hasExited;
   };
 
   const triggerExit = () => {
