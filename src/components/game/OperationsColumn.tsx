@@ -27,9 +27,9 @@ export const OperationsColumn = () => {
         Manufacturing
       </h2>
       
-      {/* Code per Second */}
+      {/* Code Lines per Second */}
       <div className="mb-4">
-        <div className="text-sm text-muted-foreground">Code per Second:</div>
+        <div className="text-sm text-muted-foreground">Code Lines per Second:</div>
         <div className="text-2xl font-mono font-bold text-primary">
           {clipmakerRate}
         </div>
@@ -45,13 +45,13 @@ export const OperationsColumn = () => {
         Make Code
       </Button>
 
-      {/* Wire */}
+      {/* Concentration Time */}
       <div className="mb-4 p-4 bg-slate-950 rounded-lg">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <div className="text-sm text-muted-foreground">Wire</div>
+            <div className="text-sm text-muted-foreground">Concentration Time</div>
             <div className="text-xl font-mono font-bold text-accent">
-              {Math.floor(wire)} inches
+              {Math.floor(wire)} seconds
             </div>
           </div>
           <div className="text-right">
@@ -66,7 +66,7 @@ export const OperationsColumn = () => {
           disabled={funds < wireCost}
           className="w-full bg-accent hover:bg-accent/80 text-slate-950 font-semibold"
         >
-          Buy Wire (1000")
+          Buy Concentration Time (1000s)
         </Button>
       </div>
 
