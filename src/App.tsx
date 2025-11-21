@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import SkillTree from "./pages/SkillTree";
 import Marketplace from "./pages/Marketplace";
 import UnicornGame from "./pages/UnicornGame";
+import WealthSimulator from "./pages/WealthSimulator";
 import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/skill-tree" element={<SkillTree />} />
             <Route path="/bnp-investissement" element={<Marketplace />} />
             <Route path="/unicorn-game" element={<UnicornGame />} />
+            <Route path="/wealth-simulator" element={<WealthSimulator />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

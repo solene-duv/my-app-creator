@@ -16,6 +16,12 @@ interface GameState {
   clipperLevel: number;
   clipperCost: number;
   
+  // Exit & Wealth
+  valuation: number;
+  equity: number;
+  hasExited: boolean;
+  exitPayout: number;
+  
   // Game State
   logs: string[];
 }
@@ -30,6 +36,8 @@ interface GameContextType extends GameState {
   restartGame: () => void;
   getPrice: () => number;
   getMarketingCost: () => number;
+  triggerExit: () => void;
+  canExit: () => boolean;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -50,6 +58,12 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   const [wirePriceCounter, setWirePriceCounter] = useState(0);
   const [clipperLevel, setClipperLevel] = useState(0);
   const [clipperCost, setClipperCost] = useState(5);
+  
+  // Exit & Wealth
+  const [valuation, setValuation] = useState(0);
+  const [equity, setEquity] = useState(100);
+  const [hasExited, setHasExited] = useState(false);
+  const [exitPayout, setExitPayout] = useState(0);
   
   const [logs, setLogs] = useState<string[]>(['> System initialized.']);
   
@@ -132,6 +146,27 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     addLog(`AutoClipper #${currentLevel + 1} online`);
   };
 
+  const canExit = () => {
+    // Exit condition: funds >= 1000K (representing unicorn status)
+    return funds >= 1000 && !hasExited;
+  };
+
+  const triggerExit = () => {
+    if (!canExit()) return;
+    
+    // Calculate valuation based on revenue (funds) with multiplier
+    const calculatedValuation = funds * 10; // 10x revenue multiple
+    setValuation(calculatedValuation);
+    
+    // Calculate payout
+    const payout = calculatedValuation * (equity / 100);
+    setExitPayout(payout);
+    setHasExited(true);
+    
+    addLog(`EXIT: Valuation €${calculatedValuation.toFixed(1)}K`);
+    addLog(`Payout: €${payout.toFixed(1)}K`);
+  };
+
   const restartGame = () => {
     setClips(0);
     setFunds(0);
@@ -145,6 +180,10 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     setWirePriceCounter(0);
     setClipperLevel(0);
     setClipperCost(5);
+    setValuation(0);
+    setEquity(100);
+    setHasExited(false);
+    setExitPayout(0);
     setLogs(['> System initialized.']);
   };
 
@@ -216,6 +255,13 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(interval);
   }, []); // Empty deps - using refs instead
 
+  // Update valuation based on funds (real-time)
+  useEffect(() => {
+    if (!hasExited && funds > 0) {
+      setValuation(funds * 10);
+    }
+  }, [funds, hasExited]);
+
   return (
     <GameContext.Provider value={{
       clips,
@@ -229,6 +275,10 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       wireBasePrice,
       clipperLevel,
       clipperCost,
+      valuation,
+      equity,
+      hasExited,
+      exitPayout,
       logs,
       makeClip,
       buyWire,
@@ -239,6 +289,8 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       restartGame,
       getPrice,
       getMarketingCost,
+      triggerExit,
+      canExit,
     }}>
       {children}
     </GameContext.Provider>
