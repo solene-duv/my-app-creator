@@ -22,6 +22,11 @@ interface GameState {
   hasExited: boolean;
   exitPayout: number;
   
+  // Milestones
+  shownMilestones: number[];
+  currentMilestone: number | null;
+  isGamePaused: boolean;
+  
   // Game State
   logs: string[];
 }
@@ -38,6 +43,7 @@ interface GameContextType extends GameState {
   getMarketingCost: () => number;
   triggerExit: () => void;
   canExit: () => boolean;
+  closeMilestone: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -64,6 +70,11 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   const [equity, setEquity] = useState(100);
   const [hasExited, setHasExited] = useState(false);
   const [exitPayout, setExitPayout] = useState(0);
+  
+  // Milestones
+  const [shownMilestones, setShownMilestones] = useState<number[]>([]);
+  const [currentMilestone, setCurrentMilestone] = useState<number | null>(null);
+  const [isGamePaused, setIsGamePaused] = useState(false);
   
   const [logs, setLogs] = useState<string[]>(['> System initialized.']);
   
@@ -92,8 +103,8 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
 
   // Make a single clip - clipClick(1)
   const makeClip = () => {
-    if (wire < 1) {
-      addLog('Out of wire!');
+    if (wire < 1 || isGamePaused) {
+      if (wire < 1) addLog('Out of wire!');
       return;
     }
     setWire(prev => prev - 1);
@@ -102,7 +113,7 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
 
   // Buy wire (1000 units) - buyWire()
   const buyWire = () => {
-    if (funds < wireCost) return;
+    if (funds < wireCost || isGamePaused) return;
     setFunds(prev => prev - wireCost);
     setWire(prev => prev + 1000);
     setWireBasePrice(prev => prev + 0.05);
@@ -110,20 +121,22 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
 
   // Lower price - lowerPrice()
   const lowerPrice = () => {
+    if (isGamePaused) return;
     setMargin(prev => Math.max(0.01, prev - 0.01));
     setDemand(prev => prev + 1);
   };
 
   // Raise price - raisePrice()
   const raisePrice = () => {
+    if (isGamePaused) return;
     setMargin(prev => prev + 0.01);
     setDemand(prev => Math.max(1, prev - 1));
   };
 
   // Buy marketing - buyAds()
   const buyMarketing = () => {
+    if (funds < getMarketingCost() || isGamePaused) return;
     const cost = getMarketingCost();
-    if (funds < cost) return;
     setFunds(prev => prev - cost);
     setDemand(prev => prev + (prev * 0.25));
     setMarketingLevel(prev => prev + 1);
@@ -132,7 +145,7 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
 
   // Buy AutoClipper - makeClipper()
   const buyAutoClipper = () => {
-    if (funds < clipperCost) return;
+    if (funds < clipperCost || isGamePaused) return;
     const currentLevel = clipperLevel;
     
     setFunds(prev => prev - clipperCost);
@@ -144,6 +157,11 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     setClipperCost(newCost);
     
     addLog(`AutoClipper #${currentLevel + 1} online`);
+  };
+
+  const closeMilestone = () => {
+    setCurrentMilestone(null);
+    setIsGamePaused(false);
   };
 
   const canExit = () => {
@@ -184,6 +202,9 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     setEquity(100);
     setHasExited(false);
     setExitPayout(0);
+    setShownMilestones([]);
+    setCurrentMilestone(null);
+    setIsGamePaused(false);
     setLogs(['> System initialized.']);
   };
 
@@ -255,6 +276,24 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(interval);
   }, []); // Empty deps - using refs instead
 
+  // Check for milestones when funds change
+  useEffect(() => {
+    if (isGamePaused || hasExited) return;
+    
+    const milestones = [20, 40, 60, 80, 100];
+    
+    // Find the next unshown milestone that we've crossed
+    for (const milestone of milestones) {
+      if (funds >= milestone && !shownMilestones.includes(milestone)) {
+        setCurrentMilestone(milestone);
+        setIsGamePaused(true);
+        setShownMilestones(prev => [...prev, milestone]);
+        addLog(`🎯 Milestone: €${milestone}K revenue!`);
+        break; // Only show one milestone at a time
+      }
+    }
+  }, [funds, shownMilestones, isGamePaused, hasExited]);
+
   // Update valuation based on funds (real-time)
   useEffect(() => {
     if (!hasExited && funds > 0) {
@@ -279,6 +318,9 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       equity,
       hasExited,
       exitPayout,
+      shownMilestones,
+      currentMilestone,
+      isGamePaused,
       logs,
       makeClip,
       buyWire,
@@ -291,6 +333,7 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       getMarketingCost,
       triggerExit,
       canExit,
+      closeMilestone,
     }}>
       {children}
     </GameContext.Provider>

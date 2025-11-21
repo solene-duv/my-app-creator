@@ -6,12 +6,13 @@ import { OperationsColumn } from "@/components/game/OperationsColumn";
 import { CapTableColumn } from "@/components/game/CapTableColumn";
 import { GameOverModal } from "@/components/game/GameOverModal";
 import { VictoryModal } from "@/components/game/VictoryModal";
+import { MilestoneModal, MILESTONES } from "@/components/game/MilestoneModal";
 import { ArrowLeft, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const UnicornGameContent = () => {
-  const { hasExited, exitPayout } = useUnicornGame();
+  const { hasExited, exitPayout, currentMilestone, closeMilestone } = useUnicornGame();
   const navigate = useNavigate();
 
   // Redirect to Wealth Simulator after exit with payout data
@@ -20,6 +21,11 @@ const UnicornGameContent = () => {
       navigate("/wealth-simulator", { state: { exitPayout } });
     }
   }, [hasExited, exitPayout, navigate]);
+
+  // Find current milestone data
+  const milestone = currentMilestone 
+    ? MILESTONES.find(m => m.revenue === currentMilestone) 
+    : null;
 
   return (
     <div className="min-h-screen bg-slate-950 text-foreground p-4">
@@ -56,6 +62,11 @@ const UnicornGameContent = () => {
       {/* Modals */}
       <GameOverModal />
       <VictoryModal />
+      <MilestoneModal 
+        milestone={milestone} 
+        isOpen={currentMilestone !== null} 
+        onClose={closeMilestone} 
+      />
     </div>
   );
 };
