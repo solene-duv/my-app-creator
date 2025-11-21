@@ -125,14 +125,25 @@ const Onboarding = () => {
           })}
         </div>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-center text-white/40 text-sm"
+          className="text-center space-y-6"
         >
-          Choose your path. Build your legacy.
-        </motion.p>
+          <p className="text-white/40 text-sm">
+            Choose your path. Build your legacy.
+          </p>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/unicorn-game')}
+            className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#00E676] to-[#7C4DFF] text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all"
+          >
+            🦄 Launch The Unicorn Run
+          </motion.button>
+        </motion.div>
       </motion.div>
     </div>
   );
