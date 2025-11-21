@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import { OnboardingQuiz } from "@/components/OnboardingQuiz";
 import { useNavigate } from "react-router-dom";
-import bnpLogo from "@/assets/bnp-paribas-logo.png";
 
 type Profile = "founder" | "owner" | "impactHero";
 
@@ -39,14 +38,7 @@ const NewIndex = () => {
 
       {/* Header */}
       <header className="relative z-10 w-full py-6 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo */}
-          <img 
-            src={bnpLogo} 
-            alt="BNP Paribas" 
-            className="h-10 md:h-12 object-contain"
-          />
-          
+        <div className="max-w-7xl mx-auto flex items-center justify-end">
           {/* Login Button */}
           <Button
             variant="ghost"
