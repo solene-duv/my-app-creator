@@ -110,19 +110,23 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   // Main game loop - 100ms tick
   useEffect(() => {
     const interval = setInterval(() => {
-      // Calculate demand based on price and marketing
-      // Lower price = higher demand
-      const demand = Math.floor((0.8 / price) * Math.pow(1.1, marketingLevel - 1) * 100);
-      setPublicDemand(Math.min(100, demand));
+      // Calculate Public Demand using Universal Paperclips formula
+      // PD = (1.1^(marketingLevel - 1)) * (0.8 / price)
+      const PD = Math.pow(1.1, marketingLevel - 1) * (0.8 / price);
+      setPublicDemand(Math.floor(PD * 100));
       
-      // Attempt to sell inventory based on demand
+      // Calculate clips sold per second using the exact formula:
+      // clipsPerSecond = min(1, PD/100) * 7 * PD^1.15
+      const clipsPerSecond = Math.min(1, PD / 100) * 7 * Math.pow(PD, 1.15);
+      
+      // Convert to per 100ms (divide by 10)
+      const clipsPerTick = clipsPerSecond / 10;
+      
+      // Attempt to sell inventory
       if (unsoldInventory > 0) {
-        // Probability of sale per tick
-        const sellChance = demand / 1000; // Convert to probability
-        if (Math.random() < sellChance) {
-          setUnsoldInventory(prev => prev - 1);
-          setFunds(prev => prev + price);
-        }
+        const clipsSold = Math.min(unsoldInventory, clipsPerTick);
+        setUnsoldInventory(prev => prev - clipsSold);
+        setFunds(prev => prev + (clipsSold * price));
       }
       
       // AutoClippers production
