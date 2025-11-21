@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Lightbulb, Zap, TrendingDown, DollarSign, PieChart, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Lightbulb, Zap, TrendingDown, DollarSign, PieChart, CheckCircle2, Award, Target } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
+import { LearningProgress } from "@/components/learning/LearningProgress";
+import { MilestoneCard } from "@/components/learning/MilestoneCard";
+import { UnlockBanner } from "@/components/learning/UnlockBanner";
 
 interface Course {
   id: string;
@@ -12,6 +14,7 @@ interface Course {
   description: string;
   icon: React.ElementType;
   color: string;
+  isPremium?: boolean;
 }
 
 const courses: Course[] = [
@@ -50,15 +53,37 @@ const courses: Course[] = [
     icon: PieChart,
     color: "text-accent",
   },
+  {
+    id: "bnp-wealth",
+    title: "BNP Wealth Management — Special Module",
+    description: "Exclusive insights into wealth management strategies for entrepreneurs. Unlock the BNP event.",
+    icon: Award,
+    color: "text-primary",
+    isPremium: true,
+  },
 ];
 
 const ContentLibrary = () => {
   const navigate = useNavigate();
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const [completedModules, setCompletedModules] = useState<string[]>([
+    "idea-to-code",
+    "mvp-fast",
+  ]);
 
   const handleBackToJourney = () => {
     navigate("/founder-journey");
   };
+
+  const handleCompleteModule = (courseId: string) => {
+    if (!completedModules.includes(courseId)) {
+      setCompletedModules([...completedModules, courseId]);
+    }
+  };
+
+  const totalModules = courses.length;
+  const completedCount = completedModules.length;
+  const bnpModuleCompleted = completedModules.includes("bnp-wealth");
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -93,13 +118,42 @@ const ContentLibrary = () => {
               Master the skills you need to build and scale your venture
             </p>
             
-            {/* Progress Bar */}
-            <div className="max-w-md mx-auto">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">Course Progress</span>
-                <span className="text-sm text-muted-foreground">2 of 5 completed</span>
+            {/* Learning Progress */}
+            <LearningProgress completed={completedCount} total={totalModules} />
+
+            {/* Unlock Banner */}
+            {bnpModuleCompleted && <UnlockBanner />}
+
+            {/* Milestones */}
+            <div className="max-w-3xl mx-auto mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-4">Your Milestones</h2>
+              <div className="grid gap-4">
+                <MilestoneCard
+                  title="Complete your first module"
+                  description="Get started with your learning journey"
+                  state="completed"
+                  icon={<Target className="h-6 w-6 text-green-500" />}
+                />
+                <MilestoneCard
+                  title="Complete two modules"
+                  description="Build momentum in your founder education"
+                  state="completed"
+                  icon={<Target className="h-6 w-6 text-green-500" />}
+                />
+                <MilestoneCard
+                  title="Finish 'Understanding Burn Rate'"
+                  description="Master cash flow management fundamentals"
+                  state={completedModules.includes("burn-rate") ? "completed" : "in-progress"}
+                  icon={<TrendingDown className="h-6 w-6 text-accent" />}
+                />
+                <MilestoneCard
+                  title="BNP Event Unlock"
+                  description="Complete the BNP Wealth Management special module to unlock access to the exclusive BNP event on 24 November 2025"
+                  state={bnpModuleCompleted ? "completed" : "locked"}
+                  icon={<Award className="h-6 w-6 text-primary" />}
+                  isPremium
+                />
               </div>
-              <Progress value={40} className="h-3" />
             </div>
           </div>
 
@@ -107,8 +161,8 @@ const ContentLibrary = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course, index) => {
               const Icon = course.icon;
-              const isCompleted = index < 2; // First 2 courses are completed
-              const isNext = index === 2; // "Understanding Burn Rate" is next
+              const isCompleted = completedModules.includes(course.id);
+              const isNext = course.id === "burn-rate" && !isCompleted;
               
               return (
                 <Card
@@ -116,7 +170,9 @@ const ContentLibrary = () => {
                   onClick={() => !isCompleted && setSelectedCourse(course.id)}
                   className={`bg-slate-900 border-primary/20 p-6 transition-all ${
                     !isCompleted ? 'hover:border-primary/40 cursor-pointer' : 'opacity-75'
-                  } ${isNext ? 'border-accent/50 shadow-accent/20 shadow-lg' : ''} group`}
+                  } ${isNext ? 'border-accent/50 shadow-accent/20 shadow-lg' : ''} ${
+                    course.isPremium && 'bg-gradient-to-br from-slate-900 to-primary/10 border-primary/40'
+                  } group`}
                 >
                   <div className="flex flex-col h-full">
                     <div className="mb-4">
@@ -126,9 +182,14 @@ const ContentLibrary = () => {
                         } transition-colors`}>
                           <Icon className={`h-8 w-8 ${course.color}`} />
                         </div>
-                        {isCompleted && (
-                          <CheckCircle2 className="h-6 w-6 text-green-500" />
-                        )}
+                        <div className="flex flex-col items-end gap-1">
+                          {isCompleted && (
+                            <CheckCircle2 className="h-6 w-6 text-green-500" />
+                          )}
+                          {course.isPremium && (
+                            <span className="text-xs font-bold text-primary">★ PREMIUM</span>
+                          )}
+                        </div>
                       </div>
                       <h3 className="text-xl font-bold text-foreground mb-2">
                         {course.title}
@@ -151,6 +212,8 @@ const ContentLibrary = () => {
                         className={`w-full mt-auto ${
                           isNext 
                             ? 'bg-accent hover:bg-accent/80 text-slate-950' 
+                            : course.isPremium
+                            ? 'bg-primary hover:bg-primary/80 text-primary-foreground'
                             : 'border-primary/50 text-primary hover:bg-primary hover:text-slate-950'
                         }`}
                       >
@@ -164,6 +227,57 @@ const ContentLibrary = () => {
           </div>
         </div>
       </div>
+
+      {/* BNP Wealth Management Module Dialog */}
+      <Dialog open={selectedCourse === "bnp-wealth"} onOpenChange={() => setSelectedCourse(null)}>
+        <DialogContent className="bg-slate-900 border-primary/20 max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-3xl text-foreground flex items-center gap-3">
+              <Award className="h-8 w-8 text-primary" />
+              BNP Wealth Management — Special Module
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            <div className="bg-primary/10 p-6 rounded-lg border border-primary/30">
+              <h3 className="text-xl font-bold text-primary mb-3">★ Premium Content</h3>
+              <p className="text-foreground leading-relaxed">
+                This exclusive module covers advanced wealth management strategies specifically designed for entrepreneurs who have successfully exited their ventures.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-primary mb-3">What You'll Learn</h3>
+              <ul className="space-y-2 text-muted-foreground ml-6">
+                <li>• Portfolio diversification strategies for high-net-worth individuals</li>
+                <li>• Tax-efficient wealth structuring</li>
+                <li>• Investment vehicles: from life insurance to private equity</li>
+                <li>• Risk management and wealth preservation</li>
+                <li>• Succession planning and legacy building</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-primary mb-3">Exclusive Event Access</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Complete this module to unlock your invitation to the BNP Paribas Wealth Management Event on 24 November 2025, where you'll network with other successful entrepreneurs and wealth management experts.
+              </p>
+            </div>
+
+            <div className="pt-4">
+              <Button
+                onClick={() => {
+                  handleCompleteModule("bnp-wealth");
+                  setSelectedCourse(null);
+                }}
+                className="w-full bg-primary hover:bg-primary/80"
+              >
+                Complete Module & Unlock Event
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Course Detail Dialog - Demo for "How Funding Works" */}
       <Dialog open={selectedCourse === "funding-works"} onOpenChange={() => setSelectedCourse(null)}>
@@ -254,15 +368,26 @@ const ContentLibrary = () => {
       </Dialog>
 
       {/* Simple placeholder for other courses */}
-      <Dialog open={selectedCourse !== null && selectedCourse !== "funding-works"} onOpenChange={() => setSelectedCourse(null)}>
+      <Dialog open={selectedCourse !== null && selectedCourse !== "funding-works" && selectedCourse !== "bnp-wealth"} onOpenChange={() => setSelectedCourse(null)}>
         <DialogContent className="bg-slate-900 border-primary/20">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-foreground">Course Coming Soon</DialogTitle>
+            <DialogTitle className="text-2xl text-foreground">Course Module</DialogTitle>
           </DialogHeader>
-          <div className="py-6">
+          <div className="py-6 space-y-4">
             <p className="text-muted-foreground">
-              This course is currently being developed. Check back soon for comprehensive content and interactive lessons.
+              This is a demo course module. In a full implementation, this would contain interactive lessons and exercises.
             </p>
+            <Button
+              onClick={() => {
+                if (selectedCourse) {
+                  handleCompleteModule(selectedCourse);
+                }
+                setSelectedCourse(null);
+              }}
+              className="w-full"
+            >
+              Mark as Completed
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
