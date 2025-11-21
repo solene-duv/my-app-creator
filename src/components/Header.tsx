@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -12,9 +13,9 @@ const Header = () => {
               FR
             </Button>
             <nav className="hidden md:flex items-center gap-6">
-              <a href="#team" className="text-sm text-primary-foreground hover:text-white transition-colors">
+              <Link to="/team" className="text-sm text-primary-foreground hover:text-white transition-colors">
                 Notre équipe
-              </a>
+              </Link>
               <a href="#contact" className="text-sm text-primary-foreground hover:text-white transition-colors">
                 Nous contacter
               </a>
