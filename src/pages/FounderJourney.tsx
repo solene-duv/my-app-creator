@@ -2,15 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Rocket, BookOpen, ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const FounderJourney = () => {
   const navigate = useNavigate();
-  const [showCoursePlaceholder, setShowCoursePlaceholder] = useState(false);
 
   const handleStartSimulation = () => {
     navigate("/unicorn-game");
+  };
+
+  const handleExploreContent = () => {
+    navigate("/content-library");
+  };
+
+  const handleBackToHome = () => {
+    navigate("/");
   };
 
   return (
@@ -22,7 +27,7 @@ const FounderJourney = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate("/")}
+              onClick={handleBackToHome}
               className="gap-2 text-foreground hover:text-primary"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -90,7 +95,7 @@ const FounderJourney = () => {
                   </p>
                 </div>
                 <Button
-                  onClick={() => setShowCoursePlaceholder(true)}
+                  onClick={handleExploreContent}
                   variant="outline"
                   className="w-full mt-auto border-accent text-accent hover:bg-accent hover:text-slate-950 font-semibold py-6"
                 >
@@ -108,30 +113,6 @@ const FounderJourney = () => {
           </div>
         </div>
       </div>
-
-      {/* Course Placeholder Dialog */}
-      <Dialog open={showCoursePlaceholder} onOpenChange={setShowCoursePlaceholder}>
-        <DialogContent className="bg-slate-900 border-primary/20">
-          <DialogHeader>
-            <DialogTitle className="text-2xl text-foreground">Course Library</DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Coming Soon
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-6">
-            <p className="text-foreground mb-4">
-              The founder course library is currently under development. It will include:
-            </p>
-            <ul className="space-y-2 text-muted-foreground">
-              <li>• Fundraising strategies and pitch deck mastery</li>
-              <li>• Growth hacking and scaling techniques</li>
-              <li>• Financial modeling for startups</li>
-              <li>• Team building and leadership</li>
-              <li>• Product-market fit frameworks</li>
-            </ul>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

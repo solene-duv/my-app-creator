@@ -14,7 +14,7 @@ const UnicornGameContent = () => {
       {/* Compact Header */}
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <Link to="/">
+          <Link to="/founder-journey">
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back
