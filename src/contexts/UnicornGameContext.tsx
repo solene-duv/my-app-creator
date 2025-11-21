@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 
 interface GameState {
   // Business Section
@@ -52,6 +52,22 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   const [clipperCost, setClipperCost] = useState(5);
   
   const [logs, setLogs] = useState<string[]>(['> System initialized.']);
+  
+  // Refs to track current values for game loop
+  const clipsRef = useRef(0);
+  const wireRef = useRef(1000);
+  const marginRef = useRef(0.25);
+  const demandRef = useRef(100);
+  const clipmakerRateRef = useRef(0);
+  const wireBasePriceRef = useRef(17.50);
+  
+  // Update refs when state changes
+  useEffect(() => { clipsRef.current = clips; }, [clips]);
+  useEffect(() => { wireRef.current = wire; }, [wire]);
+  useEffect(() => { marginRef.current = margin; }, [margin]);
+  useEffect(() => { demandRef.current = demand; }, [demand]);
+  useEffect(() => { clipmakerRateRef.current = clipmakerRate; }, [clipmakerRate]);
+  useEffect(() => { wireBasePriceRef.current = wireBasePrice; }, [wireBasePrice]);
 
   const addLog = (message: string) => {
     setLogs(prev => [...prev.slice(-9), `> ${message}`]);
@@ -140,70 +156,54 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const TICKS_PER_SECOND = 20;
     const interval = setInterval(() => {
-      const price = margin + 0.01;
-      const demandPerTick = demand / TICKS_PER_SECOND;
-      const productionPerTick = clipmakerRate / TICKS_PER_SECOND;
+      const currentClips = clipsRef.current;
+      const currentWire = wireRef.current;
+      const currentMargin = marginRef.current;
+      const currentDemand = demandRef.current;
+      const currentClipmakerRate = clipmakerRateRef.current;
+      const currentWireBasePrice = wireBasePriceRef.current;
       
-      // Update all game state in coordinated manner
-      setWire(prevWire => {
-        // A. Production - AutoClippers produce clips (if enough wire)
-        let clipsProduced = 0;
-        let wireUsed = 0;
-        
-        if (productionPerTick > 0 && prevWire >= productionPerTick) {
-          clipsProduced = productionPerTick;
-          wireUsed = productionPerTick;
-        }
-        
-        // Add produced clips to inventory
-        if (clipsProduced > 0) {
-          setClips(prevClips => {
-            const newClipsTotal = prevClips + clipsProduced;
-            
-            // B. Sales - sell based on demand
-            const clipsSoldThisTick = Math.min(newClipsTotal, demandPerTick);
-            
-            if (clipsSoldThisTick > 0) {
-              const revenue = clipsSoldThisTick * price;
-              setFunds(prevFunds => prevFunds + revenue);
-            }
-            
-            // Return inventory after production and sales
-            return newClipsTotal - clipsSoldThisTick;
-          });
-        } else {
-          // No production, just handle sales
-          setClips(prevClips => {
-            if (prevClips > 0) {
-              const clipsSoldThisTick = Math.min(prevClips, demandPerTick);
-              
-              if (clipsSoldThisTick > 0) {
-                const revenue = clipsSoldThisTick * price;
-                setFunds(prevFunds => prevFunds + revenue);
-              }
-              
-              return prevClips - clipsSoldThisTick;
-            }
-            return prevClips;
-          });
-        }
-        
-        return prevWire - wireUsed;
-      });
+      const price = currentMargin + 0.01;
+      const demandPerTick = currentDemand / TICKS_PER_SECOND;
+      const productionPerTick = currentClipmakerRate / TICKS_PER_SECOND;
       
-      // C. Dynamic Wire Price - decay
-      setWireBasePrice(prev => {
-        if (prev > 15) {
-          return prev - (prev / 1000) / TICKS_PER_SECOND;
-        }
-        return prev;
-      });
+      // A. Production - AutoClippers produce clips
+      let clipsProduced = 0;
+      let wireUsed = 0;
       
-      // C. Dynamic Wire Price - fluctuation (random check)
+      if (productionPerTick > 0 && currentWire >= productionPerTick) {
+        clipsProduced = productionPerTick;
+        wireUsed = productionPerTick;
+      }
+      
+      // B. Calculate total clips after production
+      const totalClips = currentClips + clipsProduced;
+      
+      // C. Sales - sell based on demand
+      const clipsSold = Math.min(totalClips, demandPerTick);
+      const revenue = clipsSold * price;
+      
+      // Apply all updates separately (no nesting)
+      if (wireUsed > 0) {
+        setWire(currentWire - wireUsed);
+      }
+      
+      setClips(totalClips - clipsSold);
+      
+      if (revenue > 0) {
+        setFunds(prevFunds => prevFunds + revenue);
+      }
+      
+      // D. Dynamic Wire Price - decay
+      if (currentWireBasePrice > 15) {
+        setWireBasePrice(currentWireBasePrice - (currentWireBasePrice / 1000) / TICKS_PER_SECOND);
+      }
+      
+      // E. Dynamic Wire Price - fluctuation (random check)
       if (Math.random() < 0.015) {
         setWirePriceCounter(prev => {
           const newCounter = prev + 1;
-          const newCost = Math.ceil(wireBasePrice + 6 * Math.sin(newCounter));
+          const newCost = Math.ceil(currentWireBasePrice + 6 * Math.sin(newCounter));
           setWireCost(newCost);
           return newCounter;
         });
@@ -211,7 +211,7 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
     }, 50);
 
     return () => clearInterval(interval);
-  }, [margin, demand, clipmakerRate, wireBasePrice]);
+  }, []); // Empty deps - using refs instead
 
   return (
     <GameContext.Provider value={{
