@@ -144,31 +144,51 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       const demandPerTick = demand / TICKS_PER_SECOND;
       const productionPerTick = clipmakerRate / TICKS_PER_SECOND;
       
-      // A. Production - AutoClippers produce clips
-      if (productionPerTick > 0) {
-        setWire(prevWire => {
-          if (prevWire >= productionPerTick) {
-            // Add to clips inventory
-            setClips(prevClips => prevClips + productionPerTick);
-            return prevWire - productionPerTick;
-          }
-          return prevWire;
-        });
-      }
-      
-      // B. Sales and Revenue (separate update)
-      setClips(prevClips => {
-        if (prevClips > 0) {
-          // Calculate how many clips can be sold this tick
-          const clipsSoldThisTick = Math.min(prevClips, demandPerTick);
-          
-          if (clipsSoldThisTick > 0) {
-            const revenue = clipsSoldThisTick * price;
-            setFunds(prevFunds => prevFunds + revenue);
-            return prevClips - clipsSoldThisTick;
-          }
+      // Update all game state in coordinated manner
+      setWire(prevWire => {
+        // A. Production - AutoClippers produce clips (if enough wire)
+        let clipsProduced = 0;
+        let wireUsed = 0;
+        
+        if (productionPerTick > 0 && prevWire >= productionPerTick) {
+          clipsProduced = productionPerTick;
+          wireUsed = productionPerTick;
         }
-        return prevClips;
+        
+        // Add produced clips to inventory
+        if (clipsProduced > 0) {
+          setClips(prevClips => {
+            const newClipsTotal = prevClips + clipsProduced;
+            
+            // B. Sales - sell based on demand
+            const clipsSoldThisTick = Math.min(newClipsTotal, demandPerTick);
+            
+            if (clipsSoldThisTick > 0) {
+              const revenue = clipsSoldThisTick * price;
+              setFunds(prevFunds => prevFunds + revenue);
+            }
+            
+            // Return inventory after production and sales
+            return newClipsTotal - clipsSoldThisTick;
+          });
+        } else {
+          // No production, just handle sales
+          setClips(prevClips => {
+            if (prevClips > 0) {
+              const clipsSoldThisTick = Math.min(prevClips, demandPerTick);
+              
+              if (clipsSoldThisTick > 0) {
+                const revenue = clipsSoldThisTick * price;
+                setFunds(prevFunds => prevFunds + revenue);
+              }
+              
+              return prevClips - clipsSoldThisTick;
+            }
+            return prevClips;
+          });
+        }
+        
+        return prevWire - wireUsed;
       });
       
       // C. Dynamic Wire Price - decay
