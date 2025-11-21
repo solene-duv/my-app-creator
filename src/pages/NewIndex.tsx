@@ -87,7 +87,7 @@ const NewIndex = () => {
 
           {/* Subtitle */}
           <p className="text-xl md:text-2xl lg:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Play your financial future and unlock strategies to build real wealth
+            Explore financial concepts and test them through short interactive exercises
           </p>
 
           {/* CTA Button */}

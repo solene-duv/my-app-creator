@@ -15,38 +15,38 @@ interface Question {
 const questions: Question[] = [
   {
     id: 1,
-    question: "What do you want right now?",
+    question: "What best describes your current situation?",
     answers: [
-      { text: "Grow something big", profile: "founder" },
-      { text: "Build stability", profile: "owner" },
-      { text: "Create impact", profile: "impactHero" },
+      { text: "Student", profile: "impactHero" },
+      { text: "Young professional", profile: "founder" },
+      { text: "Senior", profile: "owner" },
     ],
   },
   {
     id: 2,
-    question: "How do you see your future?",
+    question: "How much do you want to invest?",
     answers: [
-      { text: "High-stakes journey", profile: "founder" },
-      { text: "Balanced and secure", profile: "owner" },
-      { text: "Purpose-driven", profile: "impactHero" },
+      { text: "Small amount to get started", profile: "impactHero" },
+      { text: "Medium amount I can commit regularly", profile: "owner" },
+      { text: "Large amount I want to allocate seriously", profile: "founder" },
     ],
   },
   {
     id: 3,
-    question: "What do you want to unlock?",
+    question: "What is your experience level?",
     answers: [
-      { text: "Big growth strategies", profile: "founder" },
-      { text: "Better money systems", profile: "owner" },
-      { text: "Impact aligned with money", profile: "impactHero" },
+      { text: "Beginner", profile: "impactHero" },
+      { text: "Intermediate", profile: "owner" },
+      { text: "Advanced", profile: "founder" },
     ],
   },
   {
     id: 4,
-    question: "Which experience sounds best?",
+    question: "What do you want to focus on?",
     answers: [
-      { text: "Strategic simulation", profile: "founder" },
-      { text: "Practical tools", profile: "owner" },
-      { text: "Values + money alignment", profile: "impactHero" },
+      { text: "Growing my money", profile: "founder" },
+      { text: "Understanding basics", profile: "impactHero" },
+      { text: "Building long term stability", profile: "owner" },
     ],
   },
 ];
