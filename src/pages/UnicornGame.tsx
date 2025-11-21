@@ -1,4 +1,6 @@
-import { UnicornGameProvider } from "@/contexts/UnicornGameContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { UnicornGameProvider, useUnicornGame } from "@/contexts/UnicornGameContext";
 import { ProductionColumn } from "@/components/game/ProductionColumn";
 import { OperationsColumn } from "@/components/game/OperationsColumn";
 import { CapTableColumn } from "@/components/game/CapTableColumn";
@@ -9,6 +11,16 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const UnicornGameContent = () => {
+  const { hasExited } = useUnicornGame();
+  const navigate = useNavigate();
+
+  // Redirect to Wealth Simulator after exit
+  useEffect(() => {
+    if (hasExited) {
+      navigate("/wealth-simulator");
+    }
+  }, [hasExited, navigate]);
+
   return (
     <div className="min-h-screen bg-slate-950 text-foreground p-4">
       {/* Compact Header */}
