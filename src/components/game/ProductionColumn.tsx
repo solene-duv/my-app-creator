@@ -1,96 +1,74 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Code2, DollarSign, Calendar } from "lucide-react";
 import { useUnicornGame } from "@/contexts/UnicornGameContext";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export const ProductionColumn = () => {
-  const { cash, burnRate, linesOfCode, writeCode } = useUnicornGame();
-  const [showReward, setShowReward] = useState(false);
-  
-  const runway = Math.floor((cash / burnRate) * 30); // Convert to days
-  const runwayMonths = (runway / 30).toFixed(1);
+  const { 
+    linesOfCode,
+    cloudCredits,
+    unsoldCode,
+    cloudCreditCost,
+    cash,
+    writeCode,
+    buyCloudCredits,
+  } = useUnicornGame();
 
-  const handleWriteCode = () => {
-    writeCode();
-    setShowReward(true);
-    setTimeout(() => setShowReward(false), 1000);
-  };
+  const canWriteCode = cloudCredits > 0;
 
   return (
-    <div className="space-y-4">
-      <Card className="bg-slate-900 border-primary/20">
-        <CardHeader>
-          <CardTitle className="text-primary font-mono text-xl">THE GRIND</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Stats Panel */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-slate-950 rounded-lg border border-primary/30">
-              <div className="flex items-center gap-3">
-                <DollarSign className={`h-6 w-6 ${cash < 1000 ? 'text-destructive' : 'text-primary'}`} />
-                <div>
-                  <p className="text-xs text-muted-foreground">CASH</p>
-                  <p className={`font-mono text-2xl font-bold ${cash < 1000 ? 'text-destructive' : 'text-primary'}`}>
-                    €{cash.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-slate-950 rounded-lg border border-accent/30">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-6 w-6 text-accent" />
-                <div>
-                  <p className="text-xs text-muted-foreground">RUNWAY</p>
-                  <p className="font-mono text-2xl font-bold text-accent">
-                    {runway > 0 ? `${runwayMonths}M` : '0M'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-slate-950 rounded-lg border border-primary/30">
-              <div className="flex items-center gap-3">
-                <Code2 className="h-6 w-6 text-primary" />
-                <div>
-                  <p className="text-xs text-muted-foreground">LINES OF CODE</p>
-                  <p className="font-mono text-2xl font-bold text-primary">
-                    {linesOfCode.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
+    <Card className="p-4 bg-slate-900 border-primary/20">
+      <h2 className="text-xl font-bold text-primary mb-4 font-mono">
+        PRODUCTION
+      </h2>
+      
+      {/* Stats */}
+      <div className="space-y-2 mb-4">
+        <div>
+          <div className="text-xs text-muted-foreground">Total Lines of Code</div>
+          <div className="text-2xl font-mono font-bold text-primary">
+            {Math.floor(linesOfCode).toLocaleString()}
           </div>
-
-          {/* Main Action */}
-          <div className="relative">
-            <Button 
-              onClick={handleWriteCode}
-              size="lg"
-              className="w-full h-20 text-xl font-bold bg-primary hover:bg-primary/90 text-black animate-pulse"
-            >
-              <Code2 className="mr-2 h-6 w-6" />
-              WRITE CODE
-            </Button>
-            
-            {showReward && (
-              <motion.div
-                initial={{ y: 0, opacity: 1 }}
-                animate={{ y: -50, opacity: 0 }}
-                className="absolute top-0 left-1/2 -translate-x-1/2 text-primary font-mono font-bold text-xl pointer-events-none"
-              >
-                +€20 +10 CODE
-              </motion.div>
-            )}
+        </div>
+        
+        <div>
+          <div className="text-xs text-muted-foreground">Cloud Credits</div>
+          <div className="text-xl font-mono text-accent">
+            {Math.floor(cloudCredits).toLocaleString()}
           </div>
+        </div>
+        
+        <div>
+          <div className="text-xs text-muted-foreground">Unsold Inventory</div>
+          <div className="text-lg font-mono text-yellow-500">
+            {Math.floor(unsoldCode).toLocaleString()}
+          </div>
+        </div>
+      </div>
 
-          <p className="text-xs text-center text-muted-foreground">
-            Manual coding generates income and builds your product
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+      {/* Main Action */}
+      <Button
+        onClick={writeCode}
+        disabled={!canWriteCode}
+        size="lg"
+        className="w-full mb-4 bg-primary hover:bg-primary/80 text-slate-950 font-bold text-lg h-16 animate-pulse"
+      >
+        WRITE CODE
+      </Button>
+
+      {/* Buy Resources */}
+      <div className="space-y-2">
+        <div className="text-xs text-muted-foreground">
+          Credit Cost: ${cloudCreditCost.toFixed(2)}
+        </div>
+        <Button
+          onClick={() => buyCloudCredits(1000)}
+          disabled={cash < cloudCreditCost * 1000}
+          variant="outline"
+          className="w-full border-accent text-accent hover:bg-accent/20"
+        >
+          Buy 1000 Credits (${(cloudCreditCost * 1000).toFixed(0)})
+        </Button>
+      </div>
+    </Card>
   );
 };
