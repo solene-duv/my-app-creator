@@ -75,10 +75,21 @@ const Dashboard = () => {
       </div>
 
       <div className="max-w-7xl mx-auto pt-12 space-y-8">
+        {/* Play Paribas Title */}
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={() => navigate('/')}
+          className="font-display text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#00E676] to-[#7C4DFF] bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+        >
+          Play Paribas
+        </motion.h1>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
           className="flex items-center justify-between"
         >
           <div className="flex items-center gap-4">
