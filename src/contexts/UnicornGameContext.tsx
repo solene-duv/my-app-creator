@@ -113,7 +113,7 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       // Calculate Public Demand using Universal Paperclips formula
       // PD = (1.1^(marketingLevel - 1)) * (0.8 / price)
       const PD = Math.pow(1.1, marketingLevel - 1) * (0.8 / price);
-      setPublicDemand(Math.floor(PD * 100));
+      setPublicDemand(Math.floor(PD * 10) / 10);
       
       // Calculate clips sold per second using the exact formula:
       // clipsPerSecond = min(1, PD/100) * 7 * PD^1.15
