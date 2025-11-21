@@ -37,11 +37,22 @@ const FAKE_PLAYERS = [
 
 // Generate main leaderboard data for XHEC Entrepreneur cohort
 const generateMainLeaderboard = () => {
-  return FAKE_PLAYERS.slice(0, 10).map((name, index) => ({
+  const players = FAKE_PLAYERS.slice(0, 9).map((name, index) => ({
     rank: index + 1,
     name,
     valuation: Math.floor(Math.random() * 40000000) + 15000000, // 15M to 55M
-  })).sort((a, b) => b.valuation - a.valuation)
+    isCurrentUser: false,
+  }));
+  
+  // Add current user "Me" at the top
+  players.unshift({
+    rank: 1,
+    name: "Me",
+    valuation: 65000000, // 65M - winning valuation
+    isCurrentUser: true,
+  });
+  
+  return players.sort((a, b) => b.valuation - a.valuation)
     .map((item, index) => ({ ...item, rank: index + 1 }));
 };
 
@@ -54,10 +65,20 @@ const generateIndividualRankings = () => {
     "Anaïs", "Arthur", "Julie", "Mathis", "Zoé", "Raphaël", "Alice", "Tom"
   ];
   
-  return firstNames.map((name, index) => ({
-    rank: index + 1,
+  const rankings = firstNames.map((name, index) => ({
+    rank: index + 2, // Start from 2 since "Me" will be 1
     firstName: name,
+    isCurrentUser: false,
   }));
+  
+  // Add current user "Me" at the top
+  rankings.unshift({
+    rank: 1,
+    firstName: "Me",
+    isCurrentUser: true,
+  });
+  
+  return rankings;
 };
 
 const Leaderboard = () => {
@@ -184,18 +205,26 @@ const Leaderboard = () => {
                   {displayedMainData.map((entry) => (
                     <TableRow
                       key={entry.rank}
-                      className="border-primary/10 hover:bg-slate-800/50 transition-colors"
+                      className={`border-primary/10 transition-colors ${
+                        entry.isCurrentUser 
+                          ? "bg-primary/20 hover:bg-primary/30 border-primary/40" 
+                          : "hover:bg-slate-800/50"
+                      }`}
                     >
                       <TableCell className="font-bold">
                         <div className="flex items-center gap-2">
                           {entry.rank <= 3 && <Trophy className={`h-5 w-5 ${getRankColor(entry.rank)}`} />}
-                          <span className={getRankColor(entry.rank)}>
+                          <span className={entry.isCurrentUser ? "text-primary" : getRankColor(entry.rank)}>
                             #{entry.rank}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">{entry.name}</TableCell>
-                      <TableCell className="text-right font-mono font-bold text-accent">
+                      <TableCell className={`font-medium ${entry.isCurrentUser ? "text-primary font-bold" : ""}`}>
+                        {entry.name}
+                      </TableCell>
+                      <TableCell className={`text-right font-mono font-bold ${
+                        entry.isCurrentUser ? "text-primary" : "text-accent"
+                      }`}>
                         {formatValuation(entry.valuation)}
                       </TableCell>
                     </TableRow>
@@ -234,14 +263,20 @@ const Leaderboard = () => {
                   {displayedIndividualData.map((entry) => (
                     <TableRow
                       key={entry.rank}
-                      className="border-primary/10 hover:bg-slate-800/50 transition-colors"
+                      className={`border-primary/10 transition-colors ${
+                        entry.isCurrentUser 
+                          ? "bg-primary/20 hover:bg-primary/30 border-primary/40" 
+                          : "hover:bg-slate-800/50"
+                      }`}
                     >
                       <TableCell className="font-bold">
-                        <span className={getRankColor(entry.rank)}>
+                        <span className={entry.isCurrentUser ? "text-primary" : getRankColor(entry.rank)}>
                           #{entry.rank}
                         </span>
                       </TableCell>
-                      <TableCell className="font-medium">{entry.firstName}</TableCell>
+                      <TableCell className={`font-medium ${entry.isCurrentUser ? "text-primary font-bold" : ""}`}>
+                        {entry.firstName}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
