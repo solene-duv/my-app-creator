@@ -4,7 +4,7 @@ import { OperationsColumn } from "@/components/game/OperationsColumn";
 import { CapTableColumn } from "@/components/game/CapTableColumn";
 import { GameOverModal } from "@/components/game/GameOverModal";
 import { VictoryModal } from "@/components/game/VictoryModal";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -25,7 +25,12 @@ const UnicornGameContent = () => {
               THE UNICORN RUN
             </h1>
           </div>
-          <div className="w-20" />
+          <Link to="/leaderboard">
+            <Button variant="outline" size="sm" className="gap-2">
+              <Trophy className="h-4 w-4" />
+              Leaderboard
+            </Button>
+          </Link>
         </div>
 
         {/* 3-Column Compact Layout */}
