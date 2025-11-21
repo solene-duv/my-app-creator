@@ -38,7 +38,7 @@ const Header = ({ showLoginIcon = false }: HeaderProps) => {
               <Button 
                 variant="ghost" 
                 size="icon"
-                className="rounded-full text-primary-foreground hover:text-white hover:bg-white/10 transition-colors"
+                className="rounded-full text-white hover:bg-white/10 transition-colors"
                 onClick={() => console.log('Login clicked')}
               >
                 <LogIn className="h-5 w-5" />
