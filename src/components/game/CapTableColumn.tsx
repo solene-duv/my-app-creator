@@ -3,10 +3,7 @@ import { Card } from "@/components/ui/card";
 import { TerminalLog } from "./TerminalLog";
 
 const formatCurrency = (value: number) => {
-  if (value >= 1000) {
-    return `€${(value / 1000).toFixed(1)}K`;
-  }
-  return `€${value.toFixed(2)}`;
+  return `€${Math.floor(value)}K`;
 };
 
 export const CapTableColumn = () => {
