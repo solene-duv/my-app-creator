@@ -6,7 +6,7 @@ export const CapTableColumn = () => {
   const { 
     linesOfCode,
     cash,
-    autoCodeClicks,
+    autoCoderLevel,
     gameStage,
   } = useUnicornGame();
 
@@ -50,7 +50,7 @@ export const CapTableColumn = () => {
       </h2>
       
       {/* Stage Info */}
-      <div className="mb-4 p-3 bg-slate-800 rounded-lg">
+      <div className="mb-4 p-3 bg-slate-800 rounded-lg border border-primary/30">
         <div className="text-sm font-bold text-accent mb-1">
           {stage.title}
         </div>
@@ -63,27 +63,30 @@ export const CapTableColumn = () => {
             style={{ width: `${stage.progress}%` }}
           />
         </div>
+        <div className="text-xs text-right text-muted-foreground mt-1">
+          {stage.progress.toFixed(0)}%
+        </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="space-y-2 mb-4">
+      <div className="space-y-2 mb-4 p-3 bg-slate-950 rounded-lg">
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Total Code:</span>
-          <span className="font-mono text-primary">
+          <span className="font-mono text-primary font-bold">
             {Math.floor(linesOfCode).toLocaleString()}
           </span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Total Cash:</span>
-          <span className="font-mono text-primary">
+          <span className="font-mono text-primary font-bold">
             ${cash.toFixed(2)}
           </span>
         </div>
-        {autoCodeClicks > 0 && (
+        {autoCoderLevel > 0 && (
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Auto Rate:</span>
-            <span className="font-mono text-accent">
-              {autoCodeClicks.toFixed(1)}/s
+            <span className="text-muted-foreground">Auto-Coders:</span>
+            <span className="font-mono text-accent font-bold">
+              {autoCoderLevel} ({autoCoderLevel}/s)
             </span>
           </div>
         )}
