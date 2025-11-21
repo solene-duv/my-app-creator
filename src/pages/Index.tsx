@@ -5,7 +5,7 @@ import LearningSection from "@/components/LearningSection";
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header showLoginIcon={true} />
       <HeroSection />
       <LearningSection />
     </div>

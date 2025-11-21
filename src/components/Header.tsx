@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Globe } from "lucide-react";
+import { Globe, LogIn } from "lucide-react";
 import bnpLogo from "@/assets/bnp-paribas-logo.png";
 import { Link } from "react-router-dom";
 
-const Header = () => {
+interface HeaderProps {
+  showLoginIcon?: boolean;
+}
+
+const Header = ({ showLoginIcon = false }: HeaderProps) => {
   return (
     <header className="fixed top-0 left-0 right-0 w-full bg-primary/95 backdrop-blur-md shadow-lg z-50">
       <div className="container mx-auto px-4 py-4">
@@ -29,9 +33,21 @@ const Header = () => {
               className="h-10 md:h-12 object-contain cursor-pointer hover:opacity-80 transition-opacity"
             />
           </Link>
-          <Button variant="outline" className="rounded-full bg-white border-white hover:bg-white/90 text-foreground">
-            Se connecter
-          </Button>
+          <div className="flex items-center gap-3">
+            {showLoginIcon && (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="rounded-full text-primary-foreground hover:text-white hover:bg-white/10 transition-colors"
+                onClick={() => console.log('Login clicked')}
+              >
+                <LogIn className="h-5 w-5" />
+              </Button>
+            )}
+            <Button variant="outline" className="rounded-full bg-white border-white hover:bg-white/90 text-foreground">
+              Se connecter
+            </Button>
+          </div>
         </div>
       </div>
     </header>
