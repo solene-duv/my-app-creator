@@ -1,11 +1,11 @@
 const TeamSection = () => {
   const teamMembers = [
-    { name: "Christopher" },
-    { name: "Arthur" },
-    { name: "Louis" },
-    { name: "SOSO" },
-    { name: "Paul" },
-    { name: "Cass" }
+    { name: "Christopher Foliard" },
+    { name: "Arthur Chambat" },
+    { name: "Louis Pires" },
+    { name: "Solène Duval" },
+    { name: "Paul Le Rhun" },
+    { name: "Cassandre d'Arminjon" }
   ];
 
   return (
