@@ -119,18 +119,14 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   // Buy AutoClipper - makeClipper()
   const buyAutoClipper = () => {
     if (funds < clipperCost) return;
-    const currentCost = clipperCost;
     const currentLevel = clipperLevel;
     
-    setFunds(prev => prev - currentCost);
+    setFunds(prev => prev - clipperCost);
     setClipperLevel(prev => prev + 1);
     setClipmakerRate(prev => prev + 1);
     
-    // Calculate new cost: floor(currentCost * 1.15), minimum increase of 1
-    const newCost = Math.max(
-      Math.floor(currentCost * 1.15),
-      currentCost + 1
-    );
+    // Universal Paperclips formula: cost = pow(1.1, level) + 5
+    const newCost = Math.pow(1.1, currentLevel + 1) + 5;
     setClipperCost(newCost);
     
     addLog(`AutoClipper #${currentLevel + 1} online`);
@@ -164,46 +160,49 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
       const currentWireBasePrice = wireBasePriceRef.current;
       
       const price = currentMargin + 0.01;
-      const demandPerTick = currentDemand / TICKS_PER_SECOND;
-      const productionPerTick = currentClipmakerRate / TICKS_PER_SECOND;
       
       // A. Production - AutoClippers produce clips
       let clipsProduced = 0;
       let wireUsed = 0;
       
-      if (productionPerTick > 0 && currentWire >= productionPerTick) {
-        clipsProduced = productionPerTick;
-        wireUsed = productionPerTick;
+      if (currentClipmakerRate > 0 && currentWire >= currentClipmakerRate / TICKS_PER_SECOND) {
+        clipsProduced = currentClipmakerRate / TICKS_PER_SECOND;
+        wireUsed = currentClipmakerRate / TICKS_PER_SECOND;
       }
       
       // B. Calculate total clips after production
       const totalClips = currentClips + clipsProduced;
       
-      // C. Sales - sell based on demand
-      const clipsSold = Math.min(totalClips, demandPerTick);
-      const revenue = clipsSold * price;
+      // C. Sales - clips sold per tick based on demand
+      // In Universal Paperclips, demand is "per second", so divide by ticks per second
+      const clipsSoldPerTick = Math.min(totalClips, currentDemand / TICKS_PER_SECOND);
+      const revenue = clipsSoldPerTick * price;
       
       // Apply all updates separately (no nesting)
       if (wireUsed > 0) {
         setWire(currentWire - wireUsed);
       }
       
-      setClips(totalClips - clipsSold);
+      setClips(totalClips - clipsSoldPerTick);
       
       if (revenue > 0) {
         setFunds(prevFunds => prevFunds + revenue);
       }
       
-      // D. Dynamic Wire Price - decay
+      // D. Dynamic Wire Price - decay (Universal Paperclips: happens every 250 ticks)
+      // We're running at 50ms ticks, so 250 ticks = 12.5 seconds
+      // Simplified: decay continuously at the same rate
       if (currentWireBasePrice > 15) {
         setWireBasePrice(currentWireBasePrice - (currentWireBasePrice / 1000) / TICKS_PER_SECOND);
       }
       
       // E. Dynamic Wire Price - fluctuation (random check)
+      // Universal Paperclips: if (Math.random() < .015)
       if (Math.random() < 0.015) {
         setWirePriceCounter(prev => {
           const newCounter = prev + 1;
-          const newCost = Math.ceil(currentWireBasePrice + 6 * Math.sin(newCounter));
+          const wireAdjust = 6 * Math.sin(newCounter);
+          const newCost = Math.ceil(currentWireBasePrice + wireAdjust);
           setWireCost(newCost);
           return newCounter;
         });
