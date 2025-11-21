@@ -1,303 +1,265 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type GameStage = 'BOOTSTRAP' | 'SEED' | 'SERIES_A' | 'UNICORN';
+export type GameStage = 'BOOTSTRAP' | 'MARKET' | 'SCALE' | 'UNICORN';
 
 export interface Upgrade {
   id: string;
   name: string;
   cost: number;
   owned: number;
-  codePerSec?: number;
-  revenuePerSec?: number;
-  burnPerSec?: number;
-  hypeBoost?: number;
-  burnReduction?: number;
+  unlockAt?: number; // Lines of code needed to unlock
+  autoCodeRate?: number; // Auto clicks per second
 }
 
 interface GameState {
-  cash: number;
-  revenue: number;
-  equity: number;
-  valuation: number;
-  hype: number;
-  burnRate: number;
+  // Resources (Wire equivalent)
+  cloudCredits: number;
+  cloudCreditCost: number; // Volatile pricing
+  
+  // Product (Paperclips equivalent)
   linesOfCode: number;
+  unsoldCode: number;
+  
+  // Market
+  cash: number;
+  price: number;
+  marketingLevel: number;
+  demand: number;
+  
+  // Automation
+  autoCodeClicks: number;
+  
+  // Stage
   gameStage: GameStage;
   isBankrupt: boolean;
   isVictory: boolean;
   logs: string[];
   upgrades: Upgrade[];
-  mvpLaunched: boolean;
-  seedRaised: boolean;
-  seriesARaised: boolean;
-  seriesBRaised: boolean;
-  holdingSetup: boolean;
 }
 
 interface GameContextType extends GameState {
   writeCode: () => void;
+  buyCloudCredits: (amount: number) => void;
+  increasePrice: () => void;
+  decreasePrice: () => void;
   buyUpgrade: (upgradeId: string) => void;
-  launchMVP: () => void;
-  raiseSeed: () => void;
-  raiseSeriesA: () => void;
-  raiseSeriesB: () => void;
-  setupHolding: () => void;
+  buyMarketing: () => void;
   restartGame: () => void;
   addLog: (message: string) => void;
 }
 
 const initialUpgrades: Upgrade[] = [
   {
-    id: 'intern',
-    name: 'Hire Intern',
+    id: 'autocoder1',
+    name: 'AutoCoder Mk1',
+    cost: 100,
+    owned: 0,
+    unlockAt: 50,
+    autoCodeRate: 1,
+  },
+  {
+    id: 'autocoder2',
+    name: 'AutoCoder Mk2',
     cost: 500,
     owned: 0,
-    codePerSec: 1,
-    burnPerSec: 50,
+    unlockAt: 200,
+    autoCodeRate: 5,
   },
   {
-    id: 'dev',
-    name: 'Hire 10x Dev',
+    id: 'megacoder',
+    name: 'MegaCoder',
     cost: 2500,
     owned: 0,
-    codePerSec: 10,
-    burnPerSec: 500,
-  },
-  {
-    id: 'growth',
-    name: 'Growth Hacker',
-    cost: 10000,
-    owned: 0,
-    hypeBoost: 0.1,
-    burnPerSec: 800,
-  },
-  {
-    id: 'bnp',
-    name: 'BNP Pro Account',
-    cost: 200,
-    owned: 0,
-    burnReduction: 0.1,
+    unlockAt: 1000,
+    autoCodeRate: 25,
   },
 ];
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
-  const [cash, setCash] = useState(2000);
-  const [revenue, setRevenue] = useState(0);
-  const [equity, setEquity] = useState(100);
-  const [valuation, setValuation] = useState(0);
-  const [hype, setHype] = useState(1.0);
-  const [burnRate, setBurnRate] = useState(50);
+  // Resources
+  const [cloudCredits, setCloudCredits] = useState(1000);
+  const [cloudCreditCost, setCloudCreditCost] = useState(20);
+  
+  // Product
   const [linesOfCode, setLinesOfCode] = useState(0);
+  const [unsoldCode, setUnsoldCode] = useState(0);
+  
+  // Market
+  const [cash, setCash] = useState(0);
+  const [price, setPrice] = useState(0.25);
+  const [marketingLevel, setMarketingLevel] = useState(1);
+  const [demand, setDemand] = useState(0);
+  
+  // Automation
+  const [autoCodeClicks, setAutoCodeClicks] = useState(0);
+  
+  // Game State
   const [gameStage, setGameStage] = useState<GameStage>('BOOTSTRAP');
   const [isBankrupt, setIsBankrupt] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
-  const [logs, setLogs] = useState<string[]>(['> Dorm room setup complete. Start coding.']);
+  const [logs, setLogs] = useState<string[]>(['> System initialized. Start writing code.']);
   const [upgrades, setUpgrades] = useState<Upgrade[]>(initialUpgrades);
-  const [mvpLaunched, setMvpLaunched] = useState(false);
-  const [seedRaised, setSeedRaised] = useState(false);
-  const [seriesARaised, setSeriesARaised] = useState(false);
-  const [seriesBRaised, setSeriesBRaised] = useState(false);
-  const [holdingSetup, setHoldingSetup] = useState(false);
 
   const addLog = (message: string) => {
-    setLogs(prev => [...prev.slice(-19), `> ${message}`]);
+    setLogs(prev => [...prev.slice(-9), `> ${message}`]);
   };
 
   const writeCode = () => {
-    setLinesOfCode(prev => prev + 10);
-    setCash(prev => prev + 20);
+    if (cloudCredits <= 0) return;
+    
+    setCloudCredits(prev => prev - 1);
+    setUnsoldCode(prev => prev + 1);
+    setLinesOfCode(prev => prev + 1);
+    
+    // Stage progression
+    if (linesOfCode === 50) {
+      setGameStage('MARKET');
+      addLog('📊 Market unlocked! Set your price.');
+    }
+    if (linesOfCode === 500) {
+      setGameStage('SCALE');
+      addLog('🚀 Scaling phase! Automate production.');
+    }
+  };
+
+  const buyCloudCredits = (amount: number) => {
+    const cost = amount * cloudCreditCost;
+    if (cash < cost) return;
+    
+    setCash(prev => prev - cost);
+    setCloudCredits(prev => prev + amount);
+  };
+
+  const increasePrice = () => {
+    setPrice(prev => Math.min(prev + 0.01, 10));
+  };
+
+  const decreasePrice = () => {
+    setPrice(prev => Math.max(prev - 0.01, 0.01));
   };
 
   const buyUpgrade = (upgradeId: string) => {
     const upgrade = upgrades.find(u => u.id === upgradeId);
     if (!upgrade || cash < upgrade.cost) return;
+    if (upgrade.unlockAt && linesOfCode < upgrade.unlockAt) return;
 
     setCash(prev => prev - upgrade.cost);
     
     setUpgrades(prev => prev.map(u => {
       if (u.id === upgradeId) {
-        return { ...u, owned: u.owned + 1, cost: Math.floor(u.cost * 1.15) };
+        const newOwned = u.owned + 1;
+        return { 
+          ...u, 
+          owned: newOwned, 
+          cost: Math.floor(u.cost * 1.2) 
+        };
       }
       return u;
     }));
 
-    if (upgrade.hypeBoost) {
-      setHype(prev => prev + upgrade.hypeBoost!);
-    }
-
-    if (upgrade.burnReduction) {
-      setBurnRate(prev => prev * (1 - upgrade.burnReduction!));
-    }
-
-    if (upgrade.owned === 0) {
-      addLog(`Hired: ${upgrade.name}`);
-      if (upgrade.burnPerSec) {
-        addLog('⚠️ Burn rate increasing. Watch your runway!');
-      }
+    if (upgrade.autoCodeRate) {
+      setAutoCodeClicks(prev => prev + upgrade.autoCodeRate!);
+      addLog(`Automation +${upgrade.autoCodeRate}/sec`);
     }
   };
 
-  const launchMVP = () => {
-    if (linesOfCode < 1000 || cash < 5000 || mvpLaunched) return;
+  const buyMarketing = () => {
+    const cost = 100 * Math.pow(2, marketingLevel - 1);
+    if (cash < cost) return;
     
-    setCash(prev => prev - 5000);
-    setMvpLaunched(true);
-    addLog('🚀 MVP LAUNCHED! Revenue generation enabled.');
-  };
-
-  const raiseSeed = () => {
-    if (valuation < 1000000 || seedRaised) return;
-    
-    setCash(prev => prev + 500000);
-    setEquity(prev => prev - 15);
-    setSeedRaised(true);
-    setGameStage('SEED');
-    addLog('💰 SEED ROUND CLOSED: €500K wired. -15% equity.');
-    addLog('You survive, but you have bosses now.');
-  };
-
-  const raiseSeriesA = () => {
-    if (valuation < 10000000 || seriesARaised) return;
-    
-    setCash(prev => prev + 2000000);
-    setEquity(prev => prev - 20);
-    setHype(prev => prev * 2);
-    setSeriesARaised(true);
-    setGameStage('SERIES_A');
-    addLog('💎 SERIES A CLOSED: €2M wired. -20% equity.');
-    addLog('Hype multiplier activated x2!');
-  };
-
-  const raiseSeriesB = () => {
-    if (valuation < 100000000 || seriesBRaised) return;
-    
-    setCash(prev => prev + 20000000);
-    setEquity(prev => prev - 10);
-    setSeriesBRaised(true);
-    addLog('🏦 SERIES B CLOSED: €20M wired. -10% equity.');
-    addLog('War chest fully loaded.');
-  };
-
-  const setupHolding = () => {
-    if (!seriesARaised || holdingSetup) return;
-    
-    setHoldingSetup(true);
-    addLog('🏛️ OBO HOLDING SETUP: Personal wealth secured.');
-    addLog('BNP Private Banking activated.');
+    setCash(prev => prev - cost);
+    setMarketingLevel(prev => prev + 1);
+    addLog('📣 Marketing level increased!');
   };
 
   const restartGame = () => {
-    setCash(2000);
-    setRevenue(0);
-    setEquity(100);
-    setValuation(0);
-    setHype(1.0);
-    setBurnRate(50);
+    setCloudCredits(1000);
+    setCloudCreditCost(20);
     setLinesOfCode(0);
+    setUnsoldCode(0);
+    setCash(0);
+    setPrice(0.25);
+    setMarketingLevel(1);
+    setDemand(0);
+    setAutoCodeClicks(0);
     setGameStage('BOOTSTRAP');
     setIsBankrupt(false);
     setIsVictory(false);
-    setLogs(['> Dorm room setup complete. Start coding.']);
+    setLogs(['> System initialized. Start writing code.']);
     setUpgrades(initialUpgrades);
-    setMvpLaunched(false);
-    setSeedRaised(false);
-    setSeriesARaised(false);
-    setSeriesBRaised(false);
-    setHoldingSetup(false);
   };
 
-  // Game Loop
+  // Game Loop (100ms tick - Universal Paperclips style)
   useEffect(() => {
     if (isBankrupt || isVictory) return;
 
     const interval = setInterval(() => {
-      // Calculate automated code generation
-      let codePerTick = 0;
-      upgrades.forEach(upgrade => {
-        if (upgrade.codePerSec && upgrade.owned > 0) {
-          codePerTick += upgrade.codePerSec * upgrade.owned;
-        }
-      });
-      
-      setLinesOfCode(prev => prev + codePerTick);
-
-      // Calculate revenue (only if MVP launched)
-      if (mvpLaunched) {
-        setRevenue(codePerTick * 10);
+      // PHASE 1: Automated Code Writing
+      if (autoCodeClicks > 0 && cloudCredits > 0) {
+        const ticksPerSecond = autoCodeClicks / 10; // Divide by 10 because 100ms tick
+        const creditsUsed = Math.min(ticksPerSecond, cloudCredits);
+        
+        setCloudCredits(prev => prev - creditsUsed);
+        setUnsoldCode(prev => prev + creditsUsed);
+        setLinesOfCode(prev => prev + creditsUsed);
       }
-
-      // Calculate burn rate
-      let totalBurn = 50; // Base living expenses
-      upgrades.forEach(upgrade => {
-        if (upgrade.burnPerSec && upgrade.owned > 0) {
-          totalBurn += upgrade.burnPerSec * upgrade.owned;
-        }
-      });
-      setBurnRate(totalBurn);
-
-      // Update cash
-      setCash(prev => {
-        const newCash = prev + revenue - totalBurn;
+      
+      // PHASE 2: Calculate Demand (Universal Paperclips formula)
+      // Demand = (MarketingLevel / Price)
+      const calculatedDemand = marketingLevel / Math.max(price, 0.01);
+      setDemand(calculatedDemand);
+      
+      // PHASE 3: Automatic Sales
+      if (unsoldCode > 0 && calculatedDemand > 0) {
+        const soldThisTick = Math.min(unsoldCode, calculatedDemand / 10);
         
-        if (newCash <= 0 && !isBankrupt) {
-          setIsBankrupt(true);
-          addLog('💀 INSOLVENCY. GAME OVER.');
-        }
-        
-        if (newCash < 200 && newCash > 0) {
-          addLog('⚠️ WARNING: INSOLVENCY IMMINENT!');
-        }
-        
-        return newCash;
-      });
-
-      // Update valuation
-      setValuation(prev => {
-        const newVal = revenue > 0 
-          ? revenue * 12 * hype 
-          : linesOfCode * 10 * hype;
-        
-        if (newVal >= 1000000000 && !isVictory) {
-          setIsVictory(true);
-          setGameStage('UNICORN');
-          addLog('🦄 UNICORN STATUS ACHIEVED!');
-        }
-        
-        return newVal;
-      });
-    }, 1000);
+        setUnsoldCode(prev => Math.max(0, prev - soldThisTick));
+        setCash(prev => prev + (soldThisTick * price));
+      }
+      
+      // PHASE 4: Cloud Credit Cost Volatility (fluctuates like Wire in original)
+      if (Math.random() < 0.05) { // 5% chance per tick
+        setCloudCreditCost(prev => {
+          const change = (Math.random() - 0.5) * 4; // ±2
+          return Math.max(15, Math.min(30, prev + change));
+        });
+      }
+      
+      // Victory condition
+      if (cash >= 1000000 && !isVictory) {
+        setIsVictory(true);
+        setGameStage('UNICORN');
+        addLog('🦄 $1M REACHED! You win!');
+      }
+    }, 100); // 100ms tick
 
     return () => clearInterval(interval);
-  }, [revenue, burnRate, hype, linesOfCode, upgrades, mvpLaunched, isBankrupt, isVictory]);
+  }, [autoCodeClicks, cloudCredits, unsoldCode, price, marketingLevel, demand, cash, isBankrupt, isVictory, linesOfCode]);
 
   return (
     <GameContext.Provider value={{
-      cash,
-      revenue,
-      equity,
-      valuation,
-      hype,
-      burnRate,
+      cloudCredits,
+      cloudCreditCost,
       linesOfCode,
+      unsoldCode,
+      cash,
+      price,
+      marketingLevel,
+      demand,
+      autoCodeClicks,
       gameStage,
       isBankrupt,
       isVictory,
       logs,
       upgrades,
-      mvpLaunched,
-      seedRaised,
-      seriesARaised,
-      seriesBRaised,
-      holdingSetup,
       writeCode,
+      buyCloudCredits,
+      increasePrice,
+      decreasePrice,
       buyUpgrade,
-      launchMVP,
-      raiseSeed,
-      raiseSeriesA,
-      raiseSeriesB,
-      setupHolding,
+      buyMarketing,
       restartGame,
       addLog,
     }}>
