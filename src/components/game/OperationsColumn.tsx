@@ -27,9 +27,9 @@ export const OperationsColumn = () => {
         Manufacturing
       </h2>
       
-      {/* Clips per Second */}
+      {/* Code per Second */}
       <div className="mb-4">
-        <div className="text-sm text-muted-foreground">Clips per Second:</div>
+        <div className="text-sm text-muted-foreground">Code per Second:</div>
         <div className="text-2xl font-mono font-bold text-primary">
           {clipmakerRate}
         </div>
@@ -70,11 +70,11 @@ export const OperationsColumn = () => {
         </Button>
       </div>
 
-      {/* AutoClippers */}
+      {/* Dev Intern */}
       <div className="p-4 bg-slate-950 rounded-lg">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <div className="text-sm text-muted-foreground">AutoClippers</div>
+            <div className="text-sm text-muted-foreground">Dev Intern</div>
             <div className="text-xl font-mono font-bold text-primary">
               {clipperLevel}
             </div>
@@ -91,7 +91,7 @@ export const OperationsColumn = () => {
           disabled={funds < clipperCost}
           className="w-full bg-primary hover:bg-primary/80 text-slate-950 font-semibold"
         >
-          AutoClipper
+          Hire Dev Intern
         </Button>
       </div>
     </Card>
