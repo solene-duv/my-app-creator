@@ -154,17 +154,11 @@ export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
   const triggerExit = () => {
     if (!canExit()) return;
     
-    // Calculate valuation based on revenue (funds) with multiplier
-    const calculatedValuation = funds * 10; // 10x revenue multiple
-    setValuation(calculatedValuation);
-    
-    // Calculate payout
-    const payout = calculatedValuation * (equity / 100);
-    setExitPayout(payout);
+    // Use revenue directly as exit payout
+    setExitPayout(funds);
     setHasExited(true);
     
-    addLog(`EXIT: Valuation €${calculatedValuation.toFixed(1)}K`);
-    addLog(`Payout: €${payout.toFixed(1)}K`);
+    addLog(`EXIT: Revenue €${funds.toFixed(1)}K`);
   };
 
   const restartGame = () => {
