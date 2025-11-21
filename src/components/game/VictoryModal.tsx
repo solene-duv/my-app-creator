@@ -10,7 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 
 export const VictoryModal = () => {
-  const { isVictory, cash, restartGame } = useUnicornGame();
+  const { funds, restartGame } = useUnicornGame();
+  const isVictory = funds >= 1000000;
 
   return (
     <AlertDialog open={isVictory}>
@@ -23,13 +24,13 @@ export const VictoryModal = () => {
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center space-y-4 py-4">
             <div className="text-2xl font-bold text-primary font-mono">
-              ${cash.toFixed(2)}
+              ${funds.toFixed(2)}
             </div>
             <p className="text-lg text-foreground">
               You've reached $1 Million!
             </p>
             <p className="text-sm text-muted-foreground">
-              Congratulations on building a successful startup!
+              Congratulations on building a successful business!
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
