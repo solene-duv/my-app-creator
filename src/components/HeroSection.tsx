@@ -8,7 +8,11 @@ const HeroSection = () => {
           <h1 className="text-5xl md:text-7xl font-bold text-black tracking-tight">
             Financial Sims
           </h1>
-          <Button 
+          <p className="text-xl md:text-2xl text-foreground/80 max-w-2xl leading-relaxed">
+            Play your financial future<br />
+            and unlock strategies to build real wealth.
+          </p>
+          <Button
             size="lg" 
             className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-12 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
           >
