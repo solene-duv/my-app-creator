@@ -1,13 +1,11 @@
 import { useUnicornGame } from "@/contexts/UnicornGameContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
 const formatCurrency = (value: number) => {
   return `€${Math.floor(value)}K`;
 };
-
 export const OperationsColumn = () => {
-  const { 
+  const {
     clipmakerRate,
     wire,
     wireCost,
@@ -16,40 +14,30 @@ export const OperationsColumn = () => {
     clipperCost,
     makeClip,
     buyWire,
-    buyAutoClipper,
+    buyAutoClipper
   } = useUnicornGame();
-
   const canMakeClip = wire >= 1;
-
-  return (
-    <Card className="p-6 bg-slate-900 border-primary/20">
-      <h2 className="text-2xl font-bold text-primary mb-6 font-mono">
-        Manufacturing
-      </h2>
+  return <Card className="p-6 bg-slate-900 border-primary/20">
+      <h2 className="text-2xl font-bold text-primary mb-6 font-mono">Manufacture</h2>
       
       {/* Code Lines per Second */}
       <div className="mb-4">
-        <div className="text-sm text-muted-foreground">Code Lines per Second:</div>
+        <div className="text-sm text-muted-foreground">   Gold per Second:</div>
         <div className="text-2xl font-mono font-bold text-primary">
           {clipmakerRate}
         </div>
       </div>
 
       {/* Make Paperclip Button */}
-      <Button
-        onClick={makeClip}
-        disabled={!canMakeClip}
-        size="lg"
-        className="w-full mb-6 bg-primary hover:bg-primary/80 text-slate-950 font-bold text-xl h-16"
-      >
-        Make Code
+      <Button onClick={makeClip} disabled={!canMakeClip} size="lg" className="w-full mb-6 bg-primary hover:bg-primary/80 text-slate-950 font-bold text-xl h-16">
+        Mine
       </Button>
 
       {/* Concentration Time */}
       <div className="mb-4 p-4 bg-slate-950 rounded-lg">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <div className="text-sm text-muted-foreground">Concentration Time</div>
+            <div className="text-sm text-muted-foreground">Fuel</div>
             <div className="text-xl font-mono font-bold text-accent">
               {Math.floor(wire)} seconds
             </div>
@@ -61,12 +49,8 @@ export const OperationsColumn = () => {
             </div>
           </div>
         </div>
-        <Button
-          onClick={buyWire}
-          disabled={funds < wireCost}
-          className="w-full bg-accent hover:bg-accent/80 text-slate-950 font-semibold"
-        >
-          Buy Concentration Time (1000s)
+        <Button onClick={buyWire} disabled={funds < wireCost} className="w-full bg-accent hover:bg-accent/80 text-slate-950 font-semibold">
+          Buy Fuel (1000 L)
         </Button>
       </div>
 
@@ -74,7 +58,7 @@ export const OperationsColumn = () => {
       <div className="p-4 bg-slate-950 rounded-lg">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <div className="text-sm text-muted-foreground">Dev Intern</div>
+            <div className="text-sm text-muted-foreground">Employees</div>
             <div className="text-xl font-mono font-bold text-primary">
               {clipperLevel}
             </div>
@@ -86,14 +70,9 @@ export const OperationsColumn = () => {
             </div>
           </div>
         </div>
-        <Button
-          onClick={buyAutoClipper}
-          disabled={funds < clipperCost}
-          className="w-full bg-primary hover:bg-primary/80 text-slate-950 font-semibold"
-        >
-          Hire Dev Intern
+        <Button onClick={buyAutoClipper} disabled={funds < clipperCost} className="w-full bg-primary hover:bg-primary/80 text-slate-950 font-semibold">
+          Hire junior miner   
         </Button>
       </div>
-    </Card>
-  );
+    </Card>;
 };

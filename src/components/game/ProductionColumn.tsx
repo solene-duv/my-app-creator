@@ -1,19 +1,15 @@
 import { useUnicornGame } from "@/contexts/UnicornGameContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
 const formatCurrency = (value: number) => {
   return `€${Math.floor(value)}K`;
 };
-
 const formatFunds = (value: number) => {
   return `€${value.toFixed(1)}K`;
 };
-
 const formatPrice = (value: number) => {
   return `€${value.toFixed(2)}K`;
 };
-
 export const ProductionColumn = () => {
   const {
     funds,
@@ -25,21 +21,18 @@ export const ProductionColumn = () => {
     raisePrice,
     buyMarketing,
     getPrice,
-    getMarketingCost,
+    getMarketingCost
   } = useUnicornGame();
-
   const price = getPrice();
   const marketingCost = getMarketingCost();
-
-  return (
-    <Card className="p-6 bg-slate-900 border-primary/20">
+  return <Card className="p-6 bg-slate-900 border-primary/20">
       <h2 className="text-2xl font-bold text-primary mb-6 font-mono">
-        Business
+        Sales
       </h2>
       
       {/* Available Funds */}
       <div className="mb-4">
-        <div className="text-sm text-muted-foreground">Available Funds:</div>
+        <div className="text-sm text-muted-foreground">Revenue :</div>
         <div className="text-3xl font-mono font-bold text-primary">
           {formatFunds(funds)}
         </div>
@@ -56,20 +49,10 @@ export const ProductionColumn = () => {
       {/* Price Control */}
       <div className="mb-4 p-4 bg-slate-950 rounded-lg">
         <div className="flex items-center gap-3 mb-2">
-          <Button
-            onClick={lowerPrice}
-            size="sm"
-            variant="outline"
-            className="px-4"
-          >
+          <Button onClick={lowerPrice} size="sm" variant="outline" className="px-4">
             lower
           </Button>
-          <Button
-            onClick={raisePrice}
-            size="sm"
-            variant="outline"
-            className="px-4"
-          >
+          <Button onClick={raisePrice} size="sm" variant="outline" className="px-4">
             raise
           </Button>
           <div className="flex-1">
@@ -104,14 +87,9 @@ export const ProductionColumn = () => {
             </div>
           </div>
         </div>
-        <Button
-          onClick={buyMarketing}
-          disabled={funds < marketingCost}
-          className="w-full bg-primary hover:bg-primary/80 text-slate-950 font-semibold"
-        >
+        <Button onClick={buyMarketing} disabled={funds < marketingCost} className="w-full bg-primary hover:bg-primary/80 text-slate-950 font-semibold">
           Marketing
         </Button>
       </div>
-    </Card>
-  );
+    </Card>;
 };
