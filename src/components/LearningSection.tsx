@@ -8,7 +8,7 @@ const LearningSection = () => {
   ];
 
   return (
-    <section className="w-full bg-background py-16">
+    <section className="w-full bg-white py-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center space-y-8">
           <h2 className="text-2xl md:text-3xl font-semibold text-foreground text-center">
