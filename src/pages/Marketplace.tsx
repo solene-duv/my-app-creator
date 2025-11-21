@@ -119,7 +119,7 @@ const Marketplace = () => {
         >
           <div>
             <h1 className="font-display text-5xl font-bold bg-gradient-to-r from-[#00E676] to-[#7C4DFF] bg-clip-text text-transparent mb-2">
-              Marketplace
+              BNP Investissement
             </h1>
             <p className="text-white/60 text-lg">Spend XP. Get Real Perks.</p>
           </div>
