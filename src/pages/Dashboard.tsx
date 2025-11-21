@@ -225,7 +225,7 @@ const Dashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             whileHover={{ scale: 1.03 }}
-            onClick={() => navigate('/marketplace')}
+            onClick={() => navigate('/bnp-investissement')}
             className="glass-card p-6 cursor-pointer group"
           >
             <div className="space-y-4">
@@ -233,7 +233,7 @@ const Dashboard = () => {
                 <Plus className="w-6 h-6 text-[#00E676]" />
               </div>
               <div>
-                <h3 className="font-display text-xl font-bold text-white mb-2">Marketplace</h3>
+                <h3 className="font-display text-xl font-bold text-white mb-2">BNP Investissement</h3>
                 <p className="text-white/60 text-sm">Redeem real-world rewards</p>
               </div>
             </div>
