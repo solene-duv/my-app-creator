@@ -130,9 +130,19 @@ const FounderJourney = () => {
 
           {/* Additional Info */}
           <div className="mt-12 text-center">
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-6">
               Your journey is customized based on your profile. Start with the simulation or explore the course library.
             </p>
+            
+            {/* Personal Ranking Snippet */}
+            <Card className="max-w-md mx-auto bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30 p-4">
+              <div className="flex items-center justify-center gap-2 text-foreground">
+                <span className="text-2xl font-bold text-primary">#12</span>
+                <span className="text-muted-foreground">–</span>
+                <span className="text-sm">Missing <span className="font-bold text-accent">$12k</span> to reach top 3</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">Master XHEC Entrepreneur cohort</p>
+            </Card>
           </div>
         </div>
       </div>

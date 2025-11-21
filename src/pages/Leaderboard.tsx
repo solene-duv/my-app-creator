@@ -12,60 +12,63 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const SCHOOLS = [
-  "XHEC Entrepreneur",
-  "Polytechnique",
-  "HEC",
-  "CentraleSupélec",
-  "ESSEC",
-  "Sciences Po",
+const FAKE_PLAYERS = [
+  "Marie D.",
+  "Thomas M.",
+  "Sophie B.",
+  "Lucas P.",
+  "Emma R.",
+  "Hugo L.",
+  "Léa M.",
+  "Nathan G.",
+  "Chloé F.",
+  "Alexandre L.",
+  "Camille D.",
+  "Julien S.",
+  "Manon M.",
+  "Louis F.",
+  "Sarah B.",
+  "Antoine D.",
+  "Laura L.",
+  "Maxime V.",
+  "Inès G.",
+  "Pierre R.",
 ];
 
-const FAKE_NAMES = [
-  "Marie Dubois",
-  "Thomas Martin",
-  "Sophie Bernard",
-  "Lucas Petit",
-  "Emma Rousseau",
-  "Hugo Lefebvre",
-  "Léa Moreau",
-  "Nathan Garcia",
-  "Chloé Fontaine",
-  "Alexandre Laurent",
-  "Camille Durand",
-  "Julien Simon",
-  "Manon Michel",
-  "Louis Fournier",
-  "Sarah Bonnet",
-  "Antoine Dupont",
-  "Laura Lambert",
-  "Maxime Vincent",
-  "Inès Girard",
-  "Pierre Roussel",
-  "Clara Blanc",
-  "Gabriel Morel",
-  "Anaïs André",
-  "Arthur Mercier",
-  "Julie Leroy",
-];
-
-// Generate fake leaderboard data
-const generateLeaderboardData = () => {
-  const data = FAKE_NAMES.map((name, index) => ({
+// Generate main leaderboard data for XHEC Entrepreneur cohort
+const generateMainLeaderboard = () => {
+  return FAKE_PLAYERS.slice(0, 10).map((name, index) => ({
     rank: index + 1,
     name,
-    school: SCHOOLS[index % SCHOOLS.length],
-    valuation: Math.floor(Math.random() * 50000000) + 10000000, // 10M to 60M
-  })).sort((a, b) => b.valuation - a.valuation);
+    valuation: Math.floor(Math.random() * 40000000) + 15000000, // 15M to 55M
+  })).sort((a, b) => b.valuation - a.valuation)
+    .map((item, index) => ({ ...item, rank: index + 1 }));
+};
 
-  // Update ranks after sorting
-  return data.map((item, index) => ({ ...item, rank: index + 1 }));
+// Generate individual rankings (first names only)
+const generateIndividualRankings = () => {
+  const firstNames = [
+    "Marie", "Thomas", "Sophie", "Lucas", "Emma", "Hugo", "Léa", "Nathan",
+    "Chloé", "Alexandre", "Camille", "Julien", "Manon", "Louis", "Sarah",
+    "Antoine", "Laura", "Maxime", "Inès", "Pierre", "Clara", "Gabriel",
+    "Anaïs", "Arthur", "Julie", "Mathis", "Zoé", "Raphaël", "Alice", "Tom"
+  ];
+  
+  return firstNames.map((name, index) => ({
+    rank: index + 1,
+    firstName: name,
+  }));
 };
 
 const Leaderboard = () => {
-  const [showAll, setShowAll] = useState(false);
-  const leaderboardData = generateLeaderboardData();
-  const displayedData = showAll ? leaderboardData : leaderboardData.slice(0, 10);
+  const [showAllMain, setShowAllMain] = useState(false);
+  const [showAllIndividual, setShowAllIndividual] = useState(false);
+  
+  const mainLeaderboard = generateMainLeaderboard();
+  const individualRankings = generateIndividualRankings();
+  
+  const displayedMainData = showAllMain ? mainLeaderboard : mainLeaderboard.slice(0, 10);
+  const displayedIndividualData = showAllIndividual ? individualRankings : individualRankings.slice(0, 15);
 
   const formatValuation = (value: number) => {
     if (value >= 1000000) {
@@ -117,58 +120,8 @@ const Leaderboard = () => {
             </p>
           </div>
 
-          {/* Leaderboard Table */}
-          <Card className="bg-slate-900 border-primary/20 mb-8">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-primary/20 hover:bg-slate-800/50">
-                    <TableHead className="text-primary font-bold">Rank</TableHead>
-                    <TableHead className="text-primary font-bold">Player Name</TableHead>
-                    <TableHead className="text-primary font-bold">School</TableHead>
-                    <TableHead className="text-primary font-bold text-right">Valuation</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayedData.map((entry) => (
-                    <TableRow
-                      key={entry.rank}
-                      className="border-primary/10 hover:bg-slate-800/50 transition-colors"
-                    >
-                      <TableCell className="font-bold">
-                        <div className="flex items-center gap-2">
-                          {entry.rank <= 3 && <Trophy className={`h-5 w-5 ${getRankColor(entry.rank)}`} />}
-                          <span className={getRankColor(entry.rank)}>
-                            #{entry.rank}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-medium">{entry.name}</TableCell>
-                      <TableCell className="text-muted-foreground">{entry.school}</TableCell>
-                      <TableCell className="text-right font-mono font-bold text-accent">
-                        {formatValuation(entry.valuation)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            {!showAll && leaderboardData.length > 10 && (
-              <div className="p-4 border-t border-primary/20">
-                <Button
-                  onClick={() => setShowAll(true)}
-                  variant="outline"
-                  className="w-full"
-                >
-                  See more
-                </Button>
-              </div>
-            )}
-          </Card>
-
-          {/* BNP Rewards Section */}
-          <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-primary/30 p-6">
+          {/* BNP Rewards Section - Moved to Top */}
+          <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-primary/30 p-6 mb-8">
             <div className="flex items-center gap-3 mb-6">
               <Award className="h-8 w-8 text-primary" />
               <h2 className="text-2xl font-bold text-primary">BNP Rewards</h2>
@@ -211,6 +164,101 @@ const Leaderboard = () => {
                 <p className="text-sm text-muted-foreground">Student loan interest</p>
               </div>
             </div>
+          </Card>
+
+          {/* Main Leaderboard Table - XHEC Entrepreneur Cohort */}
+          <Card className="bg-slate-900 border-primary/20 mb-8">
+            <div className="p-4 border-b border-primary/20">
+              <h3 className="text-xl font-bold text-foreground">Master XHEC Entrepreneur Cohort</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-primary/20 hover:bg-slate-800/50">
+                    <TableHead className="text-primary font-bold">Rank</TableHead>
+                    <TableHead className="text-primary font-bold">Player Name</TableHead>
+                    <TableHead className="text-primary font-bold text-right">Valuation</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {displayedMainData.map((entry) => (
+                    <TableRow
+                      key={entry.rank}
+                      className="border-primary/10 hover:bg-slate-800/50 transition-colors"
+                    >
+                      <TableCell className="font-bold">
+                        <div className="flex items-center gap-2">
+                          {entry.rank <= 3 && <Trophy className={`h-5 w-5 ${getRankColor(entry.rank)}`} />}
+                          <span className={getRankColor(entry.rank)}>
+                            #{entry.rank}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{entry.name}</TableCell>
+                      <TableCell className="text-right font-mono font-bold text-accent">
+                        {formatValuation(entry.valuation)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {!showAllMain && mainLeaderboard.length > 10 && (
+              <div className="p-4 border-t border-primary/20">
+                <Button
+                  onClick={() => setShowAllMain(true)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  See more
+                </Button>
+              </div>
+            )}
+          </Card>
+
+          {/* Individual Rankings Table - First Names Only */}
+          <Card className="bg-slate-900 border-primary/20">
+            <div className="p-4 border-b border-primary/20">
+              <h3 className="text-xl font-bold text-foreground">Individual Rankings</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-primary/20 hover:bg-slate-800/50">
+                    <TableHead className="text-primary font-bold">Rank</TableHead>
+                    <TableHead className="text-primary font-bold">First Name</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {displayedIndividualData.map((entry) => (
+                    <TableRow
+                      key={entry.rank}
+                      className="border-primary/10 hover:bg-slate-800/50 transition-colors"
+                    >
+                      <TableCell className="font-bold">
+                        <span className={getRankColor(entry.rank)}>
+                          #{entry.rank}
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-medium">{entry.firstName}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {!showAllIndividual && individualRankings.length > 15 && (
+              <div className="p-4 border-t border-primary/20">
+                <Button
+                  onClick={() => setShowAllIndividual(true)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  See more
+                </Button>
+              </div>
+            )}
           </Card>
         </div>
       </main>

@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Lightbulb, Zap, TrendingDown, DollarSign, PieChart, X } from "lucide-react";
+import { ArrowLeft, Lightbulb, Zap, TrendingDown, DollarSign, PieChart, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 
 interface Course {
   id: string;
@@ -88,25 +89,46 @@ const ContentLibrary = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               Founder Course Library
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
               Master the skills you need to build and scale your venture
             </p>
+            
+            {/* Progress Bar */}
+            <div className="max-w-md mx-auto">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-foreground">Course Progress</span>
+                <span className="text-sm text-muted-foreground">2 of 5 completed</span>
+              </div>
+              <Progress value={40} className="h-3" />
+            </div>
           </div>
 
           {/* Course Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course) => {
+            {courses.map((course, index) => {
               const Icon = course.icon;
+              const isCompleted = index < 2; // First 2 courses are completed
+              const isNext = index === 2; // "Understanding Burn Rate" is next
+              
               return (
                 <Card
                   key={course.id}
-                  onClick={() => setSelectedCourse(course.id)}
-                  className="bg-slate-900 border-primary/20 p-6 hover:border-primary/40 transition-all cursor-pointer group"
+                  onClick={() => !isCompleted && setSelectedCourse(course.id)}
+                  className={`bg-slate-900 border-primary/20 p-6 transition-all ${
+                    !isCompleted ? 'hover:border-primary/40 cursor-pointer' : 'opacity-75'
+                  } ${isNext ? 'border-accent/50 shadow-accent/20 shadow-lg' : ''} group`}
                 >
                   <div className="flex flex-col h-full">
                     <div className="mb-4">
-                      <div className="inline-block p-3 bg-slate-800 rounded-lg mb-4 group-hover:bg-slate-700 transition-colors">
-                        <Icon className={`h-8 w-8 ${course.color}`} />
+                      <div className="flex items-center justify-between mb-4">
+                        <div className={`inline-block p-3 bg-slate-800 rounded-lg ${
+                          !isCompleted && 'group-hover:bg-slate-700'
+                        } transition-colors`}>
+                          <Icon className={`h-8 w-8 ${course.color}`} />
+                        </div>
+                        {isCompleted && (
+                          <CheckCircle2 className="h-6 w-6 text-green-500" />
+                        )}
                       </div>
                       <h3 className="text-xl font-bold text-foreground mb-2">
                         {course.title}
@@ -115,12 +137,26 @@ const ContentLibrary = () => {
                         {course.description}
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      className="w-full mt-auto border-primary/50 text-primary hover:bg-primary hover:text-slate-950"
-                    >
-                      View Course
-                    </Button>
+                    
+                    {isCompleted ? (
+                      <div className="w-full mt-auto py-3 text-center">
+                        <span className="text-green-500 font-semibold flex items-center justify-center gap-2">
+                          <CheckCircle2 className="h-4 w-4" />
+                          Completed
+                        </span>
+                      </div>
+                    ) : (
+                      <Button
+                        variant={isNext ? "default" : "outline"}
+                        className={`w-full mt-auto ${
+                          isNext 
+                            ? 'bg-accent hover:bg-accent/80 text-slate-950' 
+                            : 'border-primary/50 text-primary hover:bg-primary hover:text-slate-950'
+                        }`}
+                      >
+                        {isNext ? 'Start Course' : 'View Course'}
+                      </Button>
+                    )}
                   </div>
                 </Card>
               );
