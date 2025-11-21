@@ -1,230 +1,171 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type GameStage = 'BOOTSTRAP' | 'MARKET' | 'SCALE' | 'UNICORN';
-
-export interface Upgrade {
-  id: string;
-  name: string;
-  cost: number;
-  owned: number;
-}
-
 interface GameState {
-  // Core Resources
-  cash: number;
-  linesOfCode: number;
-  cloudCredits: number;
-  
-  // Market Variables
+  // Business Section
+  funds: number;
+  unsoldInventory: number;
   price: number;
   publicDemand: number;
   marketingLevel: number;
-  cloudCreditCost: number;
   
-  // Automation
-  autoCoderLevel: number;
+  // Manufacturing
+  clipsPerSecond: number;
+  wire: number;
+  wireCost: number;
+  autoClippers: number;
   
   // Game State
-  gameStage: GameStage;
-  isBankrupt: boolean;
-  isVictory: boolean;
   logs: string[];
-  tickCount: number;
 }
 
 interface GameContextType extends GameState {
-  writeCode: () => void;
-  buyCloudCredits: () => void;
-  increasePrice: () => void;
-  decreasePrice: () => void;
-  buyAutoCoder: () => void;
+  makeClip: () => void;
+  buyWire: () => void;
+  lowerPrice: () => void;
+  raisePrice: () => void;
   buyMarketing: () => void;
+  buyAutoClipper: () => void;
   restartGame: () => void;
-  addLog: (message: string) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const UnicornGameProvider = ({ children }: { children: ReactNode }) => {
-  // EXACT STARTING STATE (Universal Paperclips clone)
-  const [cash, setCash] = useState(0.00);
-  const [linesOfCode, setLinesOfCode] = useState(0);
-  const [cloudCredits, setCloudCredits] = useState(1000);
+  // Business
+  const [funds, setFunds] = useState(0);
+  const [unsoldInventory, setUnsoldInventory] = useState(0);
   const [price, setPrice] = useState(0.25);
-  const [publicDemand, setPublicDemand] = useState(30);
+  const [publicDemand, setPublicDemand] = useState(32);
   const [marketingLevel, setMarketingLevel] = useState(1);
-  const [cloudCreditCost, setCloudCreditCost] = useState(20);
-  const [autoCoderLevel, setAutoCoderLevel] = useState(0);
   
-  // Game State
-  const [gameStage, setGameStage] = useState<GameStage>('BOOTSTRAP');
-  const [isBankrupt, setIsBankrupt] = useState(false);
-  const [isVictory, setIsVictory] = useState(false);
-  const [logs, setLogs] = useState<string[]>(['> System initialized. Start coding.']);
-  const [tickCount, setTickCount] = useState(0);
+  // Manufacturing
+  const [clipsPerSecond, setClipsPerSecond] = useState(0);
+  const [wire, setWire] = useState(1000);
+  const [wireCost, setWireCost] = useState(20);
+  const [autoClippers, setAutoClippers] = useState(0);
+  
+  const [logs, setLogs] = useState<string[]>(['> System initialized.']);
 
   const addLog = (message: string) => {
     setLogs(prev => [...prev.slice(-9), `> ${message}`]);
   };
 
-  // ACTION 1: Write Code (Make Paperclip)
-  const writeCode = () => {
-    if (cloudCredits < 1) return;
-    
-    setCloudCredits(prev => prev - 1);
-    setLinesOfCode(prev => prev + 1);
-    
-    // Stage progression
-    if (linesOfCode === 50 && gameStage === 'BOOTSTRAP') {
-      setGameStage('MARKET');
-      addLog('📊 Market unlocked!');
+  // Make a single clip
+  const makeClip = () => {
+    if (wire < 1) {
+      addLog('Out of wire!');
+      return;
     }
-    if (linesOfCode === 500 && gameStage === 'MARKET') {
-      setGameStage('SCALE');
-      addLog('🚀 Automation unlocked!');
-    }
+    setWire(prev => prev - 1);
+    setUnsoldInventory(prev => prev + 1);
   };
 
-  // ACTION 2: Buy Cloud Credits (Buy Wire)
-  const buyCloudCredits = () => {
-    const cost = cloudCreditCost * 1000;
-    if (cash < cost) return;
-    
-    setCash(prev => prev - cost);
-    setCloudCredits(prev => prev + 1000);
-    addLog(`Purchased 1000 credits for $${cost.toFixed(0)}`);
+  // Buy wire (1000 inches)
+  const buyWire = () => {
+    if (funds < wireCost) return;
+    setFunds(prev => prev - wireCost);
+    setWire(prev => prev + 1000);
   };
 
-  // ACTION 3: Adjust Price
-  const increasePrice = () => {
-    setPrice(prev => Math.min(prev + 0.01, 10));
+  // Price controls
+  const lowerPrice = () => {
+    setPrice(prev => Math.max(0.01, prev - 0.01));
   };
 
-  const decreasePrice = () => {
-    setPrice(prev => Math.max(prev - 0.01, 0.01));
+  const raisePrice = () => {
+    setPrice(prev => prev + 0.01);
   };
 
-  // Buy Auto-Coder (AutoClipper)
-  const buyAutoCoder = () => {
-    const cost = 60 * Math.pow(1.1, autoCoderLevel);
-    if (cash < cost) return;
-    
-    setCash(prev => prev - cost);
-    setAutoCoderLevel(prev => prev + 1);
-    addLog(`Hired Auto-Coder #${autoCoderLevel + 1}`);
-  };
-
-  // Buy Marketing Upgrade
+  // Buy marketing
   const buyMarketing = () => {
     const cost = 100 * Math.pow(2, marketingLevel - 1);
-    if (cash < cost) return;
-    
-    setCash(prev => prev - cost);
+    if (funds < cost) return;
+    setFunds(prev => prev - cost);
     setMarketingLevel(prev => prev + 1);
-    addLog(`Marketing upgraded to Level ${marketingLevel + 1}`);
+    addLog(`Marketing Level ${marketingLevel + 1}`);
+  };
+
+  // Buy AutoClipper
+  const buyAutoClipper = () => {
+    const cost = 5 + Math.pow(1.1, autoClippers);
+    if (funds < cost) return;
+    setFunds(prev => prev - cost);
+    setAutoClippers(prev => prev + 1);
+    addLog(`AutoClipper #${autoClippers + 1} online`);
   };
 
   const restartGame = () => {
-    setCash(0);
-    setLinesOfCode(0);
-    setCloudCredits(1000);
+    setFunds(0);
+    setUnsoldInventory(0);
     setPrice(0.25);
-    setPublicDemand(30);
+    setPublicDemand(32);
     setMarketingLevel(1);
-    setCloudCreditCost(20);
-    setAutoCoderLevel(0);
-    setGameStage('BOOTSTRAP');
-    setIsBankrupt(false);
-    setIsVictory(false);
-    setLogs(['> System initialized. Start coding.']);
-    setTickCount(0);
+    setClipsPerSecond(0);
+    setWire(1000);
+    setWireCost(20);
+    setAutoClippers(0);
+    setLogs(['> System initialized.']);
   };
 
-  // THE GAME LOOP (100ms tick - 10 ticks per second)
+  // Main game loop - 100ms tick
   useEffect(() => {
-    if (isBankrupt || isVictory) return;
-
     const interval = setInterval(() => {
-      setTickCount(prev => prev + 1);
+      // Calculate demand based on price and marketing
+      // Lower price = higher demand
+      const demand = Math.floor((0.8 / price) * Math.pow(1.1, marketingLevel - 1) * 100);
+      setPublicDemand(Math.min(100, demand));
       
-      // A. CALCULATE DEMAND (The Golden Formula)
-      // demand = (0.8 / price) * (1.1 ^ (marketingLevel - 1))
-      const calculatedDemand = (0.8 / price) * Math.pow(1.1, marketingLevel - 1);
-      setPublicDemand(calculatedDemand);
-      
-      // B. SALES LOGIC (Probabilistic per tick)
-      if (linesOfCode > 0) {
-        // Demand per second, divide by 10 for 100ms tick rate
-        const demandPerTick = calculatedDemand / 10;
-        
-        // Probabilistic: always try to sell at least some based on demand
-        if (Math.random() * 10 < demandPerTick) {
-          setLinesOfCode(prev => Math.max(0, prev - 1));
-          setCash(prev => prev + price);
+      // Attempt to sell inventory based on demand
+      if (unsoldInventory > 0) {
+        // Probability of sale per tick
+        const sellChance = demand / 1000; // Convert to probability
+        if (Math.random() < sellChance) {
+          setUnsoldInventory(prev => prev - 1);
+          setFunds(prev => prev + price);
         }
       }
       
-      // C. AUTO-CODER PRODUCTION
-      if (autoCoderLevel > 0 && cloudCredits > 0) {
-        const autoProduction = autoCoderLevel / 10; // Divided by 10 for 100ms tick
-        
-        setCloudCredits(prev => {
-          const consumed = Math.min(autoProduction, prev);
-          return prev - consumed;
+      // AutoClippers production
+      if (autoClippers > 0 && wire >= autoClippers / 10) {
+        const production = autoClippers / 10; // Per 100ms
+        setWire(prev => prev - production);
+        setUnsoldInventory(prev => prev + production);
+      }
+      
+      // Update clips per second
+      setClipsPerSecond(autoClippers);
+      
+      // Wire cost fluctuation (every ~2 seconds)
+      if (Math.random() < 0.005) {
+        setWireCost(prev => {
+          const change = (Math.random() - 0.5) * 8;
+          return Math.max(15, Math.min(30, prev + change));
         });
-        setLinesOfCode(prev => prev + autoProduction);
       }
-      
-      // D. COST FLUCTUATION (Every 25 ticks = 2.5 seconds)
-      setTickCount(prevTick => {
-        if (prevTick % 25 === 0) {
-          const baseCost = 20;
-          const fluctuation = Math.sin(Date.now() / 1000) * 5;
-          const newCost = Math.max(15, Math.min(25, baseCost + fluctuation));
-          setCloudCreditCost(newCost);
-        }
-        return prevTick;
-      });
-      
-      // VICTORY CONDITION
-      if (cash >= 1000000 && !isVictory) {
-        setIsVictory(true);
-        setGameStage('UNICORN');
-        addLog('🦄 $1M REACHED!');
-      }
-      
-      // BANKRUPTCY WARNING
-      if (cloudCredits <= 0 && cash < 50 && autoCoderLevel === 0) {
-        addLog('⚠️ Out of resources! Sell code or buy credits!');
-      }
-    }, 100); // 100ms = 10 ticks per second
+    }, 100);
 
     return () => clearInterval(interval);
-  }, [linesOfCode, cloudCredits, price, marketingLevel, autoCoderLevel, cash, isBankrupt, isVictory]);
+  }, [unsoldInventory, price, marketingLevel, autoClippers, wire]);
 
   return (
     <GameContext.Provider value={{
-      cash,
-      linesOfCode,
-      cloudCredits,
+      funds,
+      unsoldInventory,
       price,
       publicDemand,
       marketingLevel,
-      cloudCreditCost,
-      autoCoderLevel,
-      gameStage,
-      isBankrupt,
-      isVictory,
+      clipsPerSecond,
+      wire,
+      wireCost,
+      autoClippers,
       logs,
-      tickCount,
-      writeCode,
-      buyCloudCredits,
-      increasePrice,
-      decreasePrice,
-      buyAutoCoder,
+      makeClip,
+      buyWire,
+      lowerPrice,
+      raisePrice,
       buyMarketing,
+      buyAutoClipper,
       restartGame,
-      addLog,
     }}>
       {children}
     </GameContext.Provider>

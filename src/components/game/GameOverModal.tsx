@@ -10,7 +10,10 @@ import {
 import { Button } from "@/components/ui/button";
 
 export const GameOverModal = () => {
-  const { isBankrupt, restartGame } = useUnicornGame();
+  const { wire, funds, restartGame } = useUnicornGame();
+  
+  // Game over if no wire and no money to buy more
+  const isBankrupt = wire === 0 && funds < 15;
 
   return (
     <AlertDialog open={isBankrupt}>
@@ -21,10 +24,10 @@ export const GameOverModal = () => {
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center space-y-4 py-4">
             <p className="text-lg text-foreground">
-              You ran out of money.
+              You ran out of resources!
             </p>
             <p className="text-sm text-muted-foreground">
-              Better luck next time!
+              No wire left and insufficient funds to continue.
             </p>
           </AlertDialogDescription>
         </AlertDialogHeader>
