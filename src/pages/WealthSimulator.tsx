@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { InvestmentCard } from "@/components/wealth/InvestmentCard";
 import { AllocationModal } from "@/components/wealth/AllocationModal";
@@ -19,8 +19,11 @@ export interface Portfolio {
 const formatWealth = (value: number) => `€${value.toFixed(1)}K`;
 
 const WealthSimulator = () => {
-  // Standalone demo with default wealth amount
-  const initialWealth = 5000;
+  const location = useLocation();
+  
+  // Get exit payout from navigation state, or use default for demo
+  const exitPayoutFromGame = (location.state as { exitPayout?: number })?.exitPayout;
+  const initialWealth = exitPayoutFromGame || 5000;
   
   const [availableWealth, setAvailableWealth] = useState(initialWealth);
   const [portfolio, setPortfolio] = useState<Portfolio>({
